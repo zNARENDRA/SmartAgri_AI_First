@@ -3,7 +3,8 @@ import json
 import pandas as pd
 import numpy as np
 from typing import Dict, Any, List, Optional
-from app.core.config import DATA_PROCESSED
+from app.core.config import SQLITE_DB_PATH, DATA_PROCESSED
+from app.db import query_as_dataframe, query_as_dicts
 from app.schemas import (
     MarketFilterOptions, MarketTrendResponse, PriceTrendPoint,
     WhereToSellResponse, MandiRankItem
@@ -14,16 +15,33 @@ class MarketIntelligenceService:
         self.csv_path = os.path.join(DATA_PROCESSED, "mandi_prices_cleaned.csv")
         self.analytics_path = os.path.join(DATA_PROCESSED, "mandi_analytics.json")
         
-        if os.path.exists(self.csv_path):
+        if os.path.exists(SQLITE_DB_PATH):
+            try:
+                self.df = query_as_dataframe(
+                    "SELECT state as State, district as District, market as Market, commodity as Commodity, variety as Variety, arrival_date as Arrival_Date, min_price as Min_Price, max_price as Max_Price, modal_price as Modal_Price FROM mandi_prices"
+                )
+                if not self.df.empty:
+                    self.df["Arrival_Date"] = pd.to_datetime(self.df["Arrival_Date"])
+                
+                rows = query_as_dicts("SELECT data_json FROM mandi_analytics WHERE key = ?", ("main_analytics",))
+                if rows:
+                    self.analytics = json.loads(rows[0]["data_json"])
+                else:
+                    self.analytics = {}
+            except Exception as e:
+                print(f"[!] Exception loading from SQLite DB in MarketIntelligenceService: {e}")
+                self.df = pd.DataFrame()
+                self.analytics = {}
+        elif os.path.exists(self.csv_path):
             self.df = pd.read_csv(self.csv_path)
             self.df["Arrival_Date"] = pd.to_datetime(self.df["Arrival_Date"])
+            if os.path.exists(self.analytics_path):
+                with open(self.analytics_path, "r", encoding="utf-8") as f:
+                    self.analytics = json.load(f)
+            else:
+                self.analytics = {}
         else:
             self.df = pd.DataFrame()
-
-        if os.path.exists(self.analytics_path):
-            with open(self.analytics_path, "r", encoding="utf-8") as f:
-                self.analytics = json.load(f)
-        else:
             self.analytics = {}
 
     def get_filter_options(self) -> MarketFilterOptions:

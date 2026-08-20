@@ -38,7 +38,6 @@ PRESETS: List[Dict[str, Any]] = [
             "phosphorus": 45.0,
             "potassium": 40.0,
             "current_crop": "Soybean",
-            "farming_season=" : "Kharif",
             "farming_season": "Kharif",
             "irrigation_source": "Drip Irrigation & Tube Well",
             "farmer_category": "Small (1-2 ha)"

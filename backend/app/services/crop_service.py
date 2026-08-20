@@ -29,6 +29,9 @@ CROP_DETAILS = {
     "coffee": {"duration": "Perennial (Shade grown)", "water": "Moderate-High", "soil": "Deep porous volcanic / forest loam", "adv": ["High export foreign exchange earner", "Intercropping with pepper & cardamom"]}
 }
 
+import pandas as pd
+from fastapi import HTTPException
+
 class CropRecommendationService:
     def __init__(self):
         model_file = os.path.join(MODELS_DIR, "crop_recommendation_model.joblib")
@@ -43,10 +46,14 @@ class CropRecommendationService:
             self.model = None
 
     def predict(self, req: CropRecommendationRequest) -> CropRecommendationResponse:
+        if self.model is None:
+            raise HTTPException(status_code=503, detail="Crop recommendation ML model is not loaded or uninitialized.")
+            
         input_data = [req.N, req.P, req.K, req.temperature, req.humidity, req.ph, req.rainfall]
-        X = np.array([input_data])
+        features = getattr(self, "features", ["N", "P", "K", "temperature", "humidity", "ph", "rainfall"])
+        X_df = pd.DataFrame([input_data], columns=features)
         
-        probs = self.model.predict_proba(X)[0]
+        probs = self.model.predict_proba(X_df)[0]
         top_indices = np.argsort(probs)[::-1][:req.top_k]
         
         recommendations = []
@@ -91,6 +98,29 @@ class CropRecommendationService:
         else:
             nutritional_analysis["Soil pH"] = f"{req.ph:.1f} (Near Neutral) - Ideal range for broad nutrient bioavailability."
 
+        # Fetch GoI District Production Statistics Context (Dataset 8) from SQLite
+        from app.core.config import SQLITE_DB_PATH
+        from app.db import query_as_dicts
+        
+        district_context = {}
+        if os.path.exists(SQLITE_DB_PATH):
+            try:
+                state_query = req.state or "Maharashtra"
+                rows = query_as_dicts(
+                    "SELECT crop, SUM(production) as total_prod, AVG(yield_ha) as avg_yield FROM district_crop_production WHERE state = ? GROUP BY crop ORDER BY total_prod DESC LIMIT 5",
+                    (state_query,)
+                )
+                if rows:
+                    district_context = {
+                        "state": state_query,
+                        "top_historically_produced_crops": [r["crop"] for r in rows],
+                        "state_avg_productivity_ha": round(float(rows[0]["avg_yield"]), 2) if rows else 3.2,
+                        "historical_note": f"{top_crop} is agronomically compatible with soil NPK ({req.N}-{req.P}-{req.K}) and rainfall ({req.rainfall} mm) in {state_query}."
+                    }
+            except Exception as e:
+                print(f"[!] Exception querying district crop production context: {e}")
+                district_context = {"state": req.state or "Maharashtra", "historical_note": "Compatible with regional agro-climatic zone."}
+
         return CropRecommendationResponse(
             top_crop=top_crop,
             recommendations=recommendations,
@@ -98,10 +128,12 @@ class CropRecommendationService:
             input_parameters={
                 "N": req.N, "P": req.P, "K": req.K,
                 "temperature": req.temperature, "humidity": req.humidity,
-                "ph": req.ph, "rainfall": req.rainfall
+                "ph": req.ph, "rainfall": req.rainfall,
+                "state": req.state or "Maharashtra"
             },
             nutritional_analysis=nutritional_analysis,
-            disclaimer="AI-generated recommendation based on soil and climate parameters. Verify with local Krishi Vigyan Kendra (KVK) or agricultural extension officers before final sowing."
+            district_context=district_context,
+            disclaimer="AI-generated recommendation based on soil parameters, climate data, and historical GoI district crop production statistics. Verify with local Krishi Vigyan Kendra (KVK) extension officers before sowing."
         )
 
 crop_service = CropRecommendationService()

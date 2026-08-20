@@ -7,7 +7,7 @@
 
 ## 🌟 Executive Summary & Key Highlights
 
-**KrishiKalyan AI** is an end-to-end, production-grade agricultural decision support platform built specifically for Indian smallholder and commercial farmers. Instead of a static prototype or isolated demo pages, KrishiKalyan AI integrates **five real-world Kaggle datasets**, trained Machine Learning models, live agro-meteorological advisory APIs, Mandi wholesale price trends, semantic government subsidy discovery, a tool-augmented central AI assistant, and an actionable **8-point Farm Action Plan**.
+**KrishiKalyan AI** is an end-to-end, production-grade agricultural decision support platform built specifically for Indian smallholder and commercial farmers. Instead of a static prototype or isolated demo pages, KrishiKalyan AI integrates **five real-world Kaggle datasets** stored in a high-performance **SQLite Relational Database Engine (`krishi_kalyan.db`)**, trained Machine Learning models, live agro-meteorological advisory APIs, Mandi wholesale price trends, semantic government subsidy discovery, a tool-augmented central AI assistant, and an actionable **8-point Farm Action Plan**.
 
 ```
                            ┌──────────────────────────────────────────────┐

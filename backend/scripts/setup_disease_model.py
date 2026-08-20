@@ -14,7 +14,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
+import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
 DATA_PROCESSED = os.path.join(BASE_DIR, "data", "processed")
 DATA_SAMPLES = os.path.join(BASE_DIR, "data", "samples")
 MODELS_DIR = os.path.join(BASE_DIR, "models")
@@ -66,13 +70,30 @@ def train_and_export_disease_model():
     print("Setting Up Plant Village Disease Detection Model")
     print("==================================================")
     
+    from app.core.config import SQLITE_DB_PATH
+    
     classes_path = os.path.join(DATA_PROCESSED, "disease_classes.json")
-    with open(classes_path, "r", encoding="utf-8") as f:
-        classes = json.load(f)
-        
     remedies_path = os.path.join(DATA_PROCESSED, "disease_remedies.json")
-    with open(remedies_path, "r", encoding="utf-8") as f:
-        remedies = json.load(f)
+    
+    classes = []
+    remedies = {}
+    
+    if os.path.exists(SQLITE_DB_PATH):
+        try:
+            from app.db import query_as_dicts
+            rows = query_as_dicts("SELECT * FROM disease_remedies")
+            classes = sorted([r["class_id"] for r in rows if r.get("class_id")])
+            remedies = {r["class_id"]: r for r in rows if r.get("class_id")}
+        except Exception as e:
+            print(f"[!] Warning reading disease remedies from SQLite: {e}")
+            
+    if not classes and os.path.exists(classes_path):
+        with open(classes_path, "r", encoding="utf-8") as f:
+            classes = json.load(f)
+            
+    if not remedies and os.path.exists(remedies_path):
+        with open(remedies_path, "r", encoding="utf-8") as f:
+            remedies = json.load(f)
 
     # Synthetic multi-condition leaf dataset based on PlantVillage characteristics
     np.random.seed(42)
@@ -125,9 +146,11 @@ def train_and_export_disease_model():
     
     print(f"Plant Village Classifier Test Accuracy: {acc:.4f} | F1: {f1:.4f} | Classes: {len(classes)}")
     
+    model_classes = clf.classes_.tolist()
+    
     model_artifact = {
         "model": clf,
-        "classes": classes,
+        "classes": model_classes,
         "feature_dim": 152,
         "accuracy": round(float(acc), 4),
         "f1": round(float(f1), 4)
@@ -135,12 +158,12 @@ def train_and_export_disease_model():
     
     metrics_export = {
         "model_type": "Extra Trees Multi-Scale Leaf Feature Classifier",
-        "total_classes": len(classes),
+        "total_classes": len(model_classes),
         "test_accuracy": round(float(acc), 4),
         "precision_weighted": round(float(prec), 4),
         "recall_weighted": round(float(rec), 4),
         "f1_weighted": round(float(f1), 4),
-        "classes": classes
+        "classes": model_classes
     }
     
     model_path = os.path.join(MODELS_DIR, "plant_disease_model.joblib")

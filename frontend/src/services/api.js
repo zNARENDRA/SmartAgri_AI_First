@@ -68,8 +68,17 @@ export const getDiseaseClasses = () =>
   fetchApi("/disease-detection/classes");
 
 // Weather & Advisory
-export const getWeatherAdvisory = (location = "Nashik, Maharashtra", crop = "General") =>
-  fetchApi(`/weather/advisory?location=${encodeURIComponent(location)}&crop=${encodeURIComponent(crop)}`);
+export const getWeatherAdvisory = (location = "Nashik, Maharashtra", crop = "General", lat = null, lon = null) => {
+  let url = `/weather/advisory?location=${encodeURIComponent(location)}&crop=${encodeURIComponent(crop)}`;
+  if (lat && lon) url += `&lat=${lat}&lon=${lon}`;
+  return fetchApi(url);
+};
+
+export const getCurrentWeather = (location = "", lat = null, lon = null) => {
+  let url = `/weather/current?location=${encodeURIComponent(location)}`;
+  if (lat && lon) url += `&lat=${lat}&lon=${lon}`;
+  return fetchApi(url);
+};
 
 // Market Intelligence
 export const getMarketFilters = () =>
@@ -137,3 +146,6 @@ export const generateCustomActionPlan = (profile) =>
 // Model & Dataset Information
 export const getModelsSummary = () =>
   fetchApi("/models-info/summary");
+
+export const getDataRegistry = () =>
+  fetchApi("/models-info/registry");

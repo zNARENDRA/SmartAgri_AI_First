@@ -12,17 +12,26 @@ set "ROOT_DIR=%~dp0"
 cd /d "%ROOT_DIR%"
 
 echo [1/4] Checking Backend Environment...
-if not exist "backend\.venv\Scripts\activate.bat" (
-    echo [*] Creating Python virtual environment in backend\.venv ...
-    python -m venv backend\.venv
-    call backend\.venv\Scripts\activate.bat
+if not exist "backend\.venv\Scripts\uvicorn.exe" (
+    if not exist "backend\.venv\Scripts\activate.bat" (
+        echo [*] Creating Python virtual environment in backend\.venv ...
+        python -m venv backend\.venv
+    )
     echo [*] Installing backend Python dependencies...
+    call backend\.venv\Scripts\activate.bat
     pip install -r backend\requirements.txt
     echo [*] Training ML Models and Ingesting Datasets...
     python backend\scripts\download_and_process_data.py
+    python backend\scripts\seed_sqlite_db.py
     python backend\scripts\train_crop_recommendation.py
     python backend\scripts\train_yield_prediction.py
     python backend\scripts\setup_disease_model.py
+)
+
+if not exist "backend\data\krishi_kalyan.db" (
+    echo [*] Seeding SQLite database krishi_kalyan.db ...
+    call backend\.venv\Scripts\activate.bat
+    python backend\scripts\seed_sqlite_db.py
 )
 
 echo [2/4] Checking Frontend Dependencies...
@@ -49,9 +58,9 @@ echo.
 echo      Opening browser in 3 seconds...
 echo ================================================================
 
-timeout /t 3 /nobreak >nul
+timeout /t 3 /nobreak >nul 2>&1
 start http://127.0.0.1:5173
 
 echo.
 echo Press any key to exit this launcher window (servers will continue running in background).
-pause >nul
+pause >nul 2>&1

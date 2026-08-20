@@ -20,7 +20,10 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_absolute_error, root_mean_squared_error, r2_score
 
+import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
 DATA_PATH = os.path.join(BASE_DIR, "data", "processed", "crop_yield_cleaned.csv")
 MODELS_DIR = os.path.join(BASE_DIR, "models")
 os.makedirs(MODELS_DIR, exist_ok=True)
@@ -30,8 +33,21 @@ def train_yield_model():
     print("Training Crop Yield Prediction Models")
     print("==================================================")
     
-    df = pd.read_csv(DATA_PATH)
+    from app.core.config import SQLITE_DB_PATH
     
+    if os.path.exists(SQLITE_DB_PATH):
+        try:
+            from app.db import query_as_dataframe
+            df = query_as_dataframe("SELECT crop as Crop, season as Season, state as State, area as Area, annual_rainfall as Annual_Rainfall, fertilizer as Fertilizer, pesticide as Pesticide, yield as Yield FROM crop_yields")
+        except Exception as e:
+            print(f"[!] Warning loading crop yields from SQLite: {e}")
+            df = pd.DataFrame()
+    else:
+        df = pd.DataFrame()
+        
+    if df.empty and os.path.exists(DATA_PATH):
+        df = pd.read_csv(DATA_PATH)
+        
     categorical_features = ["Crop", "Season", "State"]
     numerical_features = ["Area", "Annual_Rainfall", "Fertilizer", "Pesticide"]
     target = "Yield"

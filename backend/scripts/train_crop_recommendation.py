@@ -20,7 +20,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
 
+import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
 DATA_PATH = os.path.join(BASE_DIR, "data", "processed", "crop_recommendation_cleaned.csv")
 MODELS_DIR = os.path.join(BASE_DIR, "models")
 os.makedirs(MODELS_DIR, exist_ok=True)
@@ -30,7 +33,21 @@ def train_crop_model():
     print("Training Crop Recommendation Models")
     print("==================================================")
     
-    df = pd.read_csv(DATA_PATH)
+    from app.core.config import SQLITE_DB_PATH
+    
+    if os.path.exists(SQLITE_DB_PATH):
+        try:
+            from app.db import query_as_dataframe
+            df = query_as_dataframe("SELECT N, P, K, temperature, humidity, ph, rainfall, label FROM crop_recommendations")
+        except Exception as e:
+            print(f"[!] Warning loading crop recommendations from SQLite: {e}")
+            df = pd.DataFrame()
+    else:
+        df = pd.DataFrame()
+        
+    if df.empty and os.path.exists(DATA_PATH):
+        df = pd.read_csv(DATA_PATH)
+        
     features = ["N", "P", "K", "temperature", "humidity", "ph", "rainfall"]
     target = "label"
     

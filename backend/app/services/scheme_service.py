@@ -1,17 +1,43 @@
 import os
 import json
 from typing import List, Dict, Any, Optional
-from app.core.config import DATA_PROCESSED
+from app.core.config import SQLITE_DB_PATH, DATA_PROCESSED
+from app.db import query_as_dicts
 from app.schemas import SchemeItem, SchemeSearchResponse, FarmerProfile
 
 class GovernmentSchemeService:
     def __init__(self):
         self.schemes_path = os.path.join(DATA_PROCESSED, "government_schemes_cleaned.json")
-        if os.path.exists(self.schemes_path):
+        self.schemes_raw = []
+        
+        if os.path.exists(SQLITE_DB_PATH):
+            try:
+                db_rows = query_as_dicts("SELECT * FROM government_schemes")
+                for row in db_rows:
+                    scheme = {
+                        "id": row.get("id"),
+                        "scheme_name": row.get("scheme_name", ""),
+                        "short_name": row.get("short_name", ""),
+                        "category": row.get("category", ""),
+                        "sponsoring_agency": row.get("sponsoring_agency", ""),
+                        "level": row.get("level", "Central"),
+                        "description": row.get("description", ""),
+                        "benefits": row.get("benefits", ""),
+                        "eligibility_criteria": json.loads(row.get("eligibility_criteria_json") or "{}"),
+                        "target_beneficiaries": row.get("target_beneficiaries", ""),
+                        "documents_required": json.loads(row.get("documents_required_json") or "[]"),
+                        "application_process": row.get("application_process", ""),
+                        "official_url": row.get("official_url", ""),
+                        "myscheme_url": row.get("myscheme_url", ""),
+                        "helpdesk_contact": row.get("helpdesk_contact", "")
+                    }
+                    self.schemes_raw.append(scheme)
+            except Exception as e:
+                print(f"[!] Exception loading schemes from SQLite DB: {e}")
+                self.schemes_raw = []
+        elif os.path.exists(self.schemes_path):
             with open(self.schemes_path, "r", encoding="utf-8") as f:
                 self.schemes_raw = json.load(f)
-        else:
-            self.schemes_raw = []
 
     def get_all_schemes(self) -> List[SchemeItem]:
         return [SchemeItem(**s) for s in self.schemes_raw]

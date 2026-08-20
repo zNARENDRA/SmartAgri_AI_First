@@ -15,15 +15,20 @@ class AIAssistantOrchestrator:
         
         # 1. Weather Intent
         if any(k in text for k in ["weather", "mausam", "rain", "barish", "temperature", "temp", "irrigation", "pani", "spray", "spraying"]):
+            icar_guidance = self._query_icar_advisories(text, prof.current_crop, prof.state)
+            icar_citation = f"\n\n📖 **Source: {icar_guidance['source_org']}**\n> *\"{icar_guidance['advisory_text']}\"*" if icar_guidance else ""
+
             w_res = weather_service.get_weather_and_advisory(prof.district or prof.state, prof.current_crop)
-            tools = ["Weather Engine (Open-Meteo API)", "Agro-Meteorological Advisory Model"]
+            tools = ["Weather Engine (Open-Meteo API)", "IMD Rainfall Intelligence (GoI Dataset 9)", "ICAR Weather-Based Crop Advisory RAG Layer (Dataset 11)"]
             reply = (
                 f"**🌤️ Weather & Agro-Advisory for {w_res.current.location_name}:**\n\n"
                 f"- **Current Condition:** {w_res.current.condition_text} ({w_res.current.temperature:.1f}°C, Humidity: {w_res.current.humidity:.0f}%, Wind: {w_res.current.wind_speed_kmh:.1f} km/h)\n"
+                f"- **☔ Monsoon Departure:** {w_res.imd_rainfall_baseline['monsoon_status']} ({w_res.imd_rainfall_baseline['departure_percentage']} vs IMD normal baseline)\n"
                 f"- **💧 Irrigation Advisory:** **{w_res.advisory.irrigation_advice['status']}** — {w_res.advisory.irrigation_advice['summary']}\n"
                 f"- **🎯 Spraying Window:** **{w_res.advisory.spraying_window['status']}** — {w_res.advisory.spraying_window['action']}\n"
                 f"- **🦠 Disease & Pest Risk:** **{w_res.advisory.pest_disease_risk['status']}** — {w_res.advisory.pest_disease_risk['summary']}\n\n"
                 f"👉 **Practical Next Step:** {w_res.advisory.irrigation_advice['action']}"
+                f"{icar_citation}"
             )
             followups = ["What crops are suitable for this weather?", "Show 7-day rainfall forecast", "Check mandi prices for my crop"]
             return AssistantQueryResponse(
@@ -201,5 +206,19 @@ class AIAssistantOrchestrator:
                 structured_data=None,
                 suggested_followups=followups
             )
+
+    def _query_icar_advisories(self, text: str, crop: str = "", state: str = "") -> Optional[Dict[str, Any]]:
+        import os
+        from app.core.config import SQLITE_DB_PATH
+        from app.db import query_as_dicts
+        if os.path.exists(SQLITE_DB_PATH):
+            try:
+                rows = query_as_dicts("SELECT * FROM icar_advisories")
+                for r in rows:
+                    if (r["crop"].lower() in text or r["crop"].lower() in (crop or "").lower()) or (r["weather_trigger"].lower() in text):
+                        return r
+            except Exception as e:
+                print(f"[!] ICAR RAG query exception: {e}")
+        return None
 
 assistant_service = AIAssistantOrchestrator()

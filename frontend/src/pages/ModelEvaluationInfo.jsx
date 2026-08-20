@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getModelsSummary } from "../services/api";
+import { getModelsSummary, getDataRegistry } from "../services/api";
 import {
   Database,
   Award,
@@ -16,10 +16,17 @@ import {
 
 export default function ModelEvaluationInfo() {
   const [summary, setSummary] = useState(null);
+  const [registry, setRegistry] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getModelsSummary().then(setSummary).catch(console.error).finally(() => setLoading(false));
+    Promise.all([getModelsSummary(), getDataRegistry()])
+      .then(([sumData, regData]) => {
+        setSummary(sumData);
+        setRegistry(regData);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
@@ -28,13 +35,14 @@ export default function ModelEvaluationInfo() {
         <div style={{ display: "inline-block", animation: "spin 1s infinite linear" }}>
           <RefreshCw size={32} color="#059669" />
         </div>
-        <div style={{ marginTop: "12px", color: "#64748b" }}>Loading technology documentation & model transparency...</div>
+        <div style={{ marginTop: "12px", color: "#64748b" }}>Loading technology documentation & data sources registry...</div>
       </div>
     );
   }
 
   const cropAlgos = summary?.crop_recommendation_metrics?.algorithm_comparison || {};
   const yieldAlgos = summary?.crop_yield_metrics?.algorithm_comparison || {};
+  const sourcesList = registry?.sources || [];
 
   return (
     <div className="page-wrapper">
@@ -42,24 +50,29 @@ export default function ModelEvaluationInfo() {
       <div style={{ marginBottom: "20px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
           <span className="badge badge-green">Technical Transparency</span>
-          <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>Architecture & Benchmarks</span>
+          <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>11 Integrated Datasets & AI Registry</span>
         </div>
         <h1 style={{ fontSize: "24px", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em", margin: 0 }}>
-          About the AI & Data Architecture
+          Agricultural Data & AI Model Architecture Registry
         </h1>
         <p style={{ fontSize: "13px", color: "#64748b", marginTop: "2px" }}>
-          Complete documentation of agricultural datasets, machine learning architectures, evaluation benchmarks, and ethical guidelines.
+          Complete provenance, provider attributions, URLs, license information, and machine learning benchmarks across all 11 agricultural datasets.
         </p>
       </div>
 
       {/* Datasets Provenance Section */}
       <div className="card" style={{ marginBottom: "24px" }}>
-        <h2 style={{ fontSize: "16px", fontWeight: 800, color: "#0f172a", marginBottom: "14px" }}>
-          📚 Agricultural Datasets Provenance & Sources
-        </h2>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "8px" }}>
+          <h2 style={{ fontSize: "16px", fontWeight: 800, color: "#0f172a", margin: 0 }}>
+            📚 11 Integrated Agricultural Data Sources & AI Registry
+          </h2>
+          <span className="badge badge-blue">
+            Total Records: {registry?.total_records?.toLocaleString() || "100,000+"}
+          </span>
+        </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          {summary?.datasets?.map((d, idx) => (
+          {sourcesList.map((d, idx) => (
             <div
               key={idx}
               style={{
@@ -71,41 +84,42 @@ export default function ModelEvaluationInfo() {
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "6px", flexWrap: "wrap", gap: "8px" }}>
                 <div>
+                  <span className="badge badge-green" style={{ fontSize: "10px", marginBottom: "4px" }}>{d.category}</span>
                   <h3 style={{ fontSize: "15px", fontWeight: 800, color: "#0f172a", margin: "2px 0" }}>
-                    {d.name}
+                    {d.id.toUpperCase()} — {d.name}
                   </h3>
                 </div>
 
                 <a
-                  href={d.kaggle_url}
+                  href={d.url}
                   target="_blank"
                   rel="noreferrer"
                   className="btn btn-secondary"
                   style={{ padding: "5px 10px", fontSize: "11px", minHeight: "32px" }}
                 >
-                  <span>Dataset Source Reference</span>
+                  <span>Verify Data Source</span>
                   <ExternalLink size={11} />
                 </a>
               </div>
 
               <p style={{ fontSize: "12px", color: "#334155", margin: "0 0 8px 0", lineHeight: 1.4 }}>
-                <strong>Purpose:</strong> {d.purpose}
+                <strong>Attribution & Description:</strong> {d.attribution}
               </p>
 
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "8px", fontSize: "11px", color: "#475569", background: "#ffffff", padding: "10px 14px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                 <div>
-                  <strong>Records:</strong> {d.records_count}
+                  <strong>Data Provider:</strong> {d.provider}
                 </div>
                 <div>
-                  <strong>Trained Model:</strong> {d.model_trained}
+                  <strong>Records / Entries:</strong> {d.records?.toLocaleString()}
                 </div>
                 <div>
-                  <strong>Validation Metric:</strong> <span style={{ color: "#059669", fontWeight: 700 }}>{d.performance}</span>
+                  <strong>Platform Module Used:</strong> <span style={{ color: "#059669", fontWeight: 700 }}>{d.module_used}</span>
                 </div>
               </div>
 
               <div style={{ fontSize: "11px", color: "#64748b", marginTop: "8px" }}>
-                <strong>Preprocessing:</strong> {d.preprocessing} • <strong>License:</strong> {d.license}
+                <strong>License:</strong> {d.license}
               </div>
             </div>
           ))}

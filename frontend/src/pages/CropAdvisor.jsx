@@ -78,6 +78,22 @@ export default function CropAdvisor() {
     }));
   };
 
+  const fetchRealtimeClimate = async () => {
+    try {
+      const { getCurrentWeather } = await import("../services/api");
+      const data = await getCurrentWeather(profile.district || profile.state || "Nashik");
+      if (data && data.temperature_celsius !== undefined) {
+        setForm((prev) => ({
+          ...prev,
+          temperature: Math.round(data.temperature_celsius * 10) / 10,
+          humidity: Math.round(data.humidity_percentage)
+        }));
+      }
+    } catch (err) {
+      console.error("Realtime weather sync error:", err);
+    }
+  };
+
   const chartData = result && result.feature_importances ? Object.entries(result.feature_importances).map(([k, v]) => ({
     feature: k === "ph" ? "Soil pH" : k === "temperature" ? "Temp (°C)" : k === "rainfall" ? "Rain (mm)" : k === "humidity" ? "Humidity" : `Nutrient ${k}`,
     importance: Number((v * 100).toFixed(1))
@@ -100,13 +116,22 @@ export default function CropAdvisor() {
           </p>
         </div>
 
-        <button 
-          onClick={syncProfile}
-          className="btn btn-secondary"
-          style={{ fontSize: "12px", padding: "8px 14px" }}
-        >
-          <RefreshCw size={14} /> Sync from Profile
-        </button>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          <button 
+            onClick={fetchRealtimeClimate}
+            className="btn btn-secondary"
+            style={{ fontSize: "12px", padding: "8px 14px" }}
+          >
+            <Sparkles size={14} color="#0284c7" /> Live Weather Sync
+          </button>
+          <button 
+            onClick={syncProfile}
+            className="btn btn-secondary"
+            style={{ fontSize: "12px", padding: "8px 14px" }}
+          >
+            <RefreshCw size={14} /> Sync from Profile
+          </button>
+        </div>
       </div>
 
       <div className="grid-2">
@@ -324,6 +349,21 @@ export default function CropAdvisor() {
                   </ResponsiveContainer>
                 </div>
               </div>
+
+              {/* GoI District Crop Production Context (Dataset 8) */}
+              {result.district_context && result.district_context.top_historically_produced_crops && (
+                <div className="card" style={{ background: "#f0fdf4", border: "1px solid #bbf7d0" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 700, color: "#166534", marginBottom: "6px" }}>
+                    <BarChart3 size={15} /> GoI District Production Statistics ({result.district_context.state}):
+                  </div>
+                  <div style={{ fontSize: "12px", color: "#15803d", lineHeight: 1.5, marginBottom: "4px" }}>
+                    • <strong>Top Historically Cultivated Crops:</strong> {result.district_context.top_historically_produced_crops.join(", ")}
+                  </div>
+                  <div style={{ fontSize: "11px", color: "#166534", fontStyle: "italic" }}>
+                    💡 {result.district_context.historical_note}
+                  </div>
+                </div>
+              )}
 
               {/* Soil Health Insights */}
               <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "12px 14px" }}>

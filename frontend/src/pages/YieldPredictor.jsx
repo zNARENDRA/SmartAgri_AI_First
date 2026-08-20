@@ -285,6 +285,42 @@ export default function YieldPredictor() {
                 </div>
               </div>
 
+              {/* Model Evaluation Comparison & Climate Risk Index */}
+              {result.model_evaluation && (
+                <div className="card" style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                    <div style={{ fontSize: "12px", fontWeight: 700, color: "#334155" }}>
+                      📊 Model Validation Metrics (Base vs Enhanced Pipeline):
+                    </div>
+                    <span className="badge badge-amber" style={{ fontSize: "10px" }}>R² = {result.model_evaluation.r2_score}</span>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", fontSize: "11px", textAlign: "center", background: "#ffffff", padding: "8px", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
+                    <div><span style={{ color: "#64748b" }}>R² Accuracy:</span> <strong style={{ color: "#059669" }}>{(result.model_evaluation.r2_score * 100).toFixed(1)}%</strong></div>
+                    <div><span style={{ color: "#64748b" }}>MAE:</span> <strong>{result.model_evaluation.mae_tons_ha} T/Ha</strong></div>
+                    <div><span style={{ color: "#64748b" }}>RMSE:</span> <strong>{result.model_evaluation.rmse_tons_ha} T/Ha</strong></div>
+                  </div>
+                  <div style={{ fontSize: "10px", color: "#64748b", marginTop: "6px" }}>
+                    {result.model_evaluation.evaluation_note}
+                  </div>
+                </div>
+              )}
+
+              {result.climate_risk_index && (
+                <div className="card" style={{ background: "#fffbe6", border: "1px solid #ffe58f" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                    <span style={{ fontSize: "12px", fontWeight: 700, color: "#d48806" }}>
+                      🌧️ Climate Risk Indicator: {result.climate_risk_index.risk_level}
+                    </span>
+                    <span style={{ fontSize: "11px", fontWeight: 700, color: "#b7eb8f", background: "#52c41a", padding: "2px 8px", borderRadius: "9999px" }}>
+                      {result.climate_risk_index.score}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: "12px", color: "#8c8c8c", lineHeight: 1.4 }}>
+                    {result.climate_risk_index.impact}
+                  </div>
+                </div>
+              )}
+
               {/* Actionable Productivity Optimization Recommendations */}
               <div className="card" style={{ borderLeft: "4px solid #10b981" }}>
                 <h3 style={{ fontSize: "14px", fontWeight: 800, color: "#0f172a", marginBottom: "10px" }}>

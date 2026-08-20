@@ -6,6 +6,7 @@ DATA_RAW = os.path.join(DATA_DIR, "raw")
 DATA_PROCESSED = os.path.join(DATA_DIR, "processed")
 DATA_SAMPLES = os.path.join(DATA_DIR, "samples")
 MODELS_DIR = os.path.join(BASE_DIR, "models")
+SQLITE_DB_PATH = os.path.join(DATA_DIR, "krishi_kalyan.db")
 
 PROJECT_NAME = "KrishiKalyan AI"
 VERSION = "1.0.0"

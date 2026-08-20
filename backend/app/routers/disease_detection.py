@@ -17,7 +17,7 @@ async def diagnose_leaf_image(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Image size exceeds 10MB limit.")
         
     try:
-        return disease_service.diagnose(contents)
+        return disease_service.diagnose(contents, filename=file.filename or "uploaded_leaf.jpg")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Leaf diagnosis inference failed: {str(e)}")
 
@@ -28,7 +28,7 @@ def diagnose_sample_image(filename: str = Query(..., description="Sample filenam
         raise HTTPException(status_code=404, detail="Sample image not found.")
         
     try:
-        return disease_service.diagnose(sample_path)
+        return disease_service.diagnose(sample_path, filename=filename)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Sample diagnosis failed: {str(e)}")
 

@@ -28,6 +28,7 @@ class CropRecommendationRequest(BaseModel):
     ph: float = Field(..., ge=3.5, le=10.0, description="Soil pH value")
     rainfall: float = Field(..., ge=0, le=600, description="Rainfall (mm)")
     top_k: int = Field(default=3, ge=1, le=10, description="Number of top crops to return")
+    state: Optional[str] = Field(default="Maharashtra", description="State for district historical context")
 
 class CropScore(BaseModel):
     crop: str
@@ -42,8 +43,9 @@ class CropRecommendationResponse(BaseModel):
     top_crop: str
     recommendations: List[CropScore]
     feature_importances: Dict[str, float]
-    input_parameters: Dict[str, float]
+    input_parameters: Dict[str, Any]
     nutritional_analysis: Dict[str, str]
+    district_context: Optional[Dict[str, Any]] = None
     disclaimer: str
 
 # ----------------- Crop Yield Prediction -----------------
@@ -66,14 +68,19 @@ class YieldPredictionResponse(BaseModel):
     productivity_rating: str
     key_drivers: Dict[str, float]
     optimization_recommendations: List[str]
+    model_evaluation: Optional[Dict[str, Any]] = None
+    climate_risk_index: Optional[Dict[str, Any]] = None
     disclaimer: str
 
 # ----------------- Plant Disease Detection -----------------
 class DiseaseDiagnosisResponse(BaseModel):
+    request_id: Optional[str] = Field(default="DX-2026-0001", description="Unique diagnostic request ID")
+    is_low_confidence: bool = Field(default=False, description="True if prediction confidence is below threshold (< 40%)")
+    confidence_tier: str = Field(default="High Confidence", description="High Confidence, Moderate Confidence, or Low Confidence / Uncertain")
     detected_crop: str
     condition: str
-    status: str # Healthy or Diseased
-    severity: str # None, Low, Moderate, High, Severe
+    status: str # Healthy, Diseased, or Uncertain
+    severity: str # None, Low, Moderate, High, Severe, or Uncertain
     confidence: float
     confidence_percentage: str
     pathogen: str
@@ -84,6 +91,7 @@ class DiseaseDiagnosisResponse(BaseModel):
     prevention_measures: str
     top_predictions: List[Dict[str, Any]]
     disclaimer: str
+    debug_info: Optional[Dict[str, Any]] = None
 
 # ----------------- Weather & Advisory -----------------
 class WeatherCurrent(BaseModel):
@@ -117,6 +125,7 @@ class WeatherAdvisoryResponse(BaseModel):
     current: WeatherCurrent
     forecast: List[DailyForecastItem]
     advisory: AgroAdvisory
+    imd_rainfall_baseline: Optional[Dict[str, Any]] = None
     provider: str
 
 # ----------------- Market Intelligence -----------------

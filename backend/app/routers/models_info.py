@@ -102,3 +102,8 @@ def get_models_and_datasets_summary():
             "disclaimer": "All predictions communicate uncertainty scores. Farmers should verify critical decisions with local agricultural officers (KVK / Gram Sevak) and official government portals."
         }
     }
+
+@router.get("/registry")
+def get_data_sources_registry():
+    from app.core.data_registry import get_registry_summary
+    return get_registry_summary()

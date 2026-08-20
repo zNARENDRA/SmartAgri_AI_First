@@ -53,12 +53,44 @@ class WeatherService:
     def __init__(self):
         self.client = httpx.Client(timeout=8.0)
 
-    def get_weather_and_advisory(self, location_query: str = "Nashik", crop_context: str = "General") -> WeatherAdvisoryResponse:
+    def resolve_location(self, location_query: str = "", lat: float = None, lon: float = None):
+        """Resolves location query or lat/lon coordinates to exact latitude, longitude, and display name."""
+        if lat is not None and lon is not None:
+            return float(lat), float(lon), f"GPS Location ({float(lat):.2f}°, {float(lon):.2f}°)"
+
+        if not location_query or location_query.strip() == "":
+            return 19.9975, 73.7898, "Nashik, Maharashtra"
+
         loc_key = location_query.strip().lower().split(",")[0].strip()
-        lat, lon, display_name = CITY_COORDINATES.get(loc_key, (19.9975, 73.7898, f"{location_query}, India"))
+        if loc_key in CITY_COORDINATES:
+            c_lat, c_lon, display = CITY_COORDINATES[loc_key]
+            return c_lat, c_lon, display
+
+        # Query Open-Meteo Geocoding API dynamically for any city/district in India/world
+        try:
+            g_resp = self.client.get(f"https://geocoding-api.open-meteo.com/v1/search?name={location_query}&count=1&language=en&format=json")
+            if g_resp.status_code == 200:
+                g_data = g_resp.json()
+                results = g_data.get("results", [])
+                if results:
+                    r = results[0]
+                    g_lat = float(r["latitude"])
+                    g_lon = float(r["longitude"])
+                    name = r.get("name", location_query)
+                    state = r.get("admin1", "")
+                    country = r.get("country", "")
+                    disp = f"{name}, {state}" if state else f"{name}, {country}"
+                    return g_lat, g_lon, disp
+        except Exception as e:
+            print(f"[Geocoding Notice] Fallback for '{location_query}': {e}")
+
+        return 19.9975, 73.7898, f"{location_query.title()}, India"
+
+    def get_weather_and_advisory(self, location_query: str = "Nashik", crop_context: str = "General", lat: float = None, lon: float = None) -> WeatherAdvisoryResponse:
+        c_lat, c_lon, display_name = self.resolve_location(location_query, lat, lon)
         
         try:
-            url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&timezone=auto"
+            url = f"https://api.open-meteo.com/v1/forecast?latitude={c_lat}&longitude={c_lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&timezone=auto"
             resp = self.client.get(url)
             if resp.status_code == 200:
                 data = resp.json()
@@ -67,6 +99,48 @@ class WeatherService:
             print(f"[Weather API Notice] Using fallback agro-meteorological simulation: {e}")
             
         return self._generate_fallback_response(display_name, crop_context)
+
+    def get_realtime_temperature_and_weather(self, location_query: str = "", lat: float = None, lon: float = None) -> Dict[str, Any]:
+        c_lat, c_lon, display_name = self.resolve_location(location_query, lat, lon)
+        try:
+            url = f"https://api.open-meteo.com/v1/forecast?latitude={c_lat}&longitude={c_lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m&timezone=auto"
+            resp = self.client.get(url)
+            if resp.status_code == 200:
+                curr = resp.json().get("current", {})
+                code = int(curr.get("weather_code", 0))
+                return {
+                    "status": "success",
+                    "is_realtime": True,
+                    "location_name": display_name,
+                    "latitude": c_lat,
+                    "longitude": c_lon,
+                    "temperature_celsius": float(curr.get("temperature_2m", 28.5)),
+                    "humidity_percentage": float(curr.get("relative_humidity_2m", 65.0)),
+                    "wind_speed_kmh": float(curr.get("wind_speed_10m", 11.2)),
+                    "precipitation_mm": float(curr.get("precipitation", 0.0)),
+                    "condition_text": WMO_WEATHER_CODES.get(code, "Partly Cloudy ⛅"),
+                    "weather_code": code,
+                    "provider": "Open-Meteo Global Realtime Meteorological API",
+                    "timestamp": datetime.datetime.now().isoformat()
+                }
+        except Exception as e:
+            print(f"[Realtime Weather API Exception]: {e}")
+
+        return {
+            "status": "fallback",
+            "is_realtime": False,
+            "location_name": display_name,
+            "latitude": c_lat,
+            "longitude": c_lon,
+            "temperature_celsius": 28.5,
+            "humidity_percentage": 65.0,
+            "wind_speed_kmh": 10.0,
+            "precipitation_mm": 0.0,
+            "condition_text": "Mainly Clear 🌤️",
+            "weather_code": 1,
+            "provider": "Agro-Meteorological Service (Offline Fallback)",
+            "timestamp": datetime.datetime.now().isoformat()
+        }
 
     def _parse_api_response(self, data: Dict[str, Any], location_name: str, crop: str) -> WeatherAdvisoryResponse:
         curr = data.get("current", {})
@@ -112,10 +186,12 @@ class WeatherService:
             ))
 
         advisory_obj = self._compute_agro_advisory(current_obj, forecast_list, crop)
+        imd_baseline = self._fetch_imd_rainfall_baseline(location_name)
         return WeatherAdvisoryResponse(
             current=current_obj,
             forecast=forecast_list,
             advisory=advisory_obj,
+            imd_rainfall_baseline=imd_baseline,
             provider="Open-Meteo Global Meteorological Service"
         )
 
@@ -146,12 +222,62 @@ class WeatherService:
             ))
             
         advisory_obj = self._compute_agro_advisory(current_obj, forecast_list, crop)
+        imd_baseline = self._fetch_imd_rainfall_baseline(location_name)
         return WeatherAdvisoryResponse(
             current=current_obj,
             forecast=forecast_list,
             advisory=advisory_obj,
+            imd_rainfall_baseline=imd_baseline,
             provider="Agro-Meteorological Service (Offline Baseline)"
         )
+
+    def _fetch_imd_rainfall_baseline(self, location_name: str) -> Dict[str, Any]:
+        import os
+        from app.core.config import SQLITE_DB_PATH
+        from app.db import query_as_dicts
+        
+        state = "Maharashtra"
+        for st in ["Maharashtra", "Punjab", "Karnataka", "Gujarat", "Uttar Pradesh", "Madhya Pradesh"]:
+            if st.lower() in location_name.lower():
+                state = st
+                break
+                
+        if os.path.exists(SQLITE_DB_PATH):
+            try:
+                curr_month = datetime.date.today().strftime("%b")
+                rows = query_as_dicts(
+                    "SELECT * FROM imd_rainfall WHERE state = ? ORDER BY id LIMIT 1",
+                    (state,)
+                )
+                if rows:
+                    r = rows[0]
+                    dep = float(r.get("departure_pct", 0.0))
+                    status_text = "Above Normal Rainfall (+)" if dep > 10.0 else ("Below Normal Rainfall (-)" if dep < -10.0 else "Normal Monsoon Baseline")
+                    return {
+                        "state": state,
+                        "subdivision": r.get("subdivision", state),
+                        "month": r.get("month", curr_month),
+                        "season": r.get("season", "Monsoon"),
+                        "normal_rainfall_mm": float(r.get("normal_mm", 220.0)),
+                        "actual_rainfall_mm": float(r.get("actual_mm", 240.0)),
+                        "departure_pct": dep,
+                        "departure_percentage": f"{dep:+.1f}%",
+                        "monsoon_status": status_text
+                    }
+            except Exception as e:
+                print(f"[!] Warning querying IMD rainfall baseline: {e}")
+                
+        return {
+            "state": state,
+            "subdivision": f"{state} Division",
+            "month": "Aug",
+            "season": "Monsoon",
+            "normal_rainfall_mm": 210.0,
+            "actual_rainfall_mm": 235.0,
+            "departure_pct": 11.9,
+            "departure_percentage": "+11.9%",
+            "monsoon_status": "Normal Monsoon Baseline"
+        }
 
     def _compute_agro_advisory(self, current: WeatherCurrent, forecast: List[DailyForecastItem], crop: str) -> AgroAdvisory:
         # 1. Total rain expected next 48h

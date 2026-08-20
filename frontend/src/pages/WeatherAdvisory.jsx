@@ -34,16 +34,36 @@ export default function WeatherAdvisory() {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchWeather = async (loc) => {
+  const fetchWeather = async (loc, lat = null, lon = null) => {
     setLoading(true);
     try {
-      const data = await getWeatherAdvisory(loc, profile.current_crop);
+      const data = await getWeatherAdvisory(loc, profile.current_crop, lat, lon);
       setWeatherData(data);
+      if (data && data.current && data.current.location_name) {
+        setLocationInput(data.current.location_name);
+      }
     } catch (err) {
       console.error("Weather fetch error:", err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchGpsLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+    setLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        fetchWeather("", pos.coords.latitude, pos.coords.longitude);
+      },
+      () => {
+        setLoading(false);
+        alert("GPS Location access denied or unavailable. Search any city name in the input box!");
+      }
+    );
   };
 
   useEffect(() => {
@@ -71,33 +91,45 @@ export default function WeatherAdvisory() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-            <span className="badge badge-blue">Real-time Weather</span>
-            <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>Open-Meteo Global Agro-Meteorology</span>
+            <span className="badge badge-green">🟢 LIVE Real-time Weather Feed</span>
+            <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>Open-Meteo Meteorological API</span>
           </div>
           <h1 style={{ fontSize: "24px", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em", margin: 0 }}>
-            Agro-Meteorological Advisory
+            Real-Time Weather & Agro-Advisory
           </h1>
           <p style={{ fontSize: "13px", color: "#64748b", marginTop: "2px" }}>
-            Translating forecasts into precision irrigation, spray windows, harvest, and fungal risk alerts.
+            Translating live real-time temperature, humidity, and forecasts into precision farming decisions.
           </p>
         </div>
 
-        <form onSubmit={handleSearch} style={{ display: "flex", gap: "8px", width: "100%", maxWidth: "380px" }}>
-          <div style={{ position: "relative", flex: 1 }}>
-            <MapPin size={16} color="#64748b" style={{ position: "absolute", left: "12px", top: "12px" }} />
-            <input
-              type="text"
-              value={locationInput}
-              onChange={(e) => setLocationInput(e.target.value)}
-              placeholder="Search District (e.g. Pune, Ludhiana)"
-              className="form-input"
-              style={{ paddingLeft: "36px", margin: 0 }}
-            />
-          </div>
-          <button type="submit" disabled={loading} className="btn btn-primary" style={{ flexShrink: 0 }}>
-            <Search size={16} />
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px", width: "100%", maxWidth: "420px" }}>
+          <form onSubmit={handleSearch} style={{ display: "flex", gap: "8px", width: "100%" }}>
+            <div style={{ position: "relative", flex: 1 }}>
+              <MapPin size={16} color="#64748b" style={{ position: "absolute", left: "12px", top: "12px" }} />
+              <input
+                type="text"
+                value={locationInput}
+                onChange={(e) => setLocationInput(e.target.value)}
+                placeholder="Search City/District (e.g. Pune, Ludhiana, Sangli)"
+                className="form-input"
+                style={{ paddingLeft: "36px", margin: 0 }}
+              />
+            </div>
+            <button type="submit" disabled={loading} className="btn btn-primary" style={{ flexShrink: 0 }}>
+              <Search size={16} />
+            </button>
+          </form>
+          
+          <button
+            type="button"
+            onClick={fetchGpsLocation}
+            disabled={loading}
+            className="btn btn-secondary"
+            style={{ fontSize: "11px", padding: "6px 12px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+          >
+            <MapPin size={13} color="#059669" /> Use Live GPS Location
           </button>
-        </form>
+        </div>
       </div>
 
       {loading && (
@@ -119,7 +151,7 @@ export default function WeatherAdvisory() {
             color: "#ffffff",
             borderRadius: "16px",
             padding: "20px 24px",
-            marginBottom: "20px",
+            marginBottom: "16px",
             boxShadow: "0 10px 20px -5px rgba(2, 132, 199, 0.3)",
             display: "flex",
             justifyContent: "space-between",
@@ -168,6 +200,25 @@ export default function WeatherAdvisory() {
               </div>
             </div>
           </div>
+
+          {/* GoI IMD Meteorological Rainfall Baseline Card (Dataset 9) */}
+          {weatherData.imd_rainfall_baseline && (
+            <div className="card" style={{ background: "#f0f9ff", border: "1px solid #bae6fd", marginBottom: "20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px", flexWrap: "wrap", gap: "8px" }}>
+                <div style={{ fontSize: "13px", fontWeight: 800, color: "#0369a1", display: "flex", alignItems: "center", gap: "6px" }}>
+                  <CloudRain size={16} /> GoI IMD Meteorological Rainfall Baseline ({weatherData.imd_rainfall_baseline.subdivision})
+                </div>
+                <span className="badge badge-blue" style={{ fontSize: "11px" }}>
+                  {weatherData.imd_rainfall_baseline.monsoon_status}
+                </span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "10px", fontSize: "12px", background: "#ffffff", padding: "10px 14px", borderRadius: "8px", border: "1px solid #e0f2fe" }}>
+                <div><span style={{ color: "#64748b" }}>Normal Baseline:</span> <strong style={{ color: "#0f172a" }}>{weatherData.imd_rainfall_baseline.normal_rainfall_mm} mm</strong></div>
+                <div><span style={{ color: "#64748b" }}>Actual Recorded:</span> <strong style={{ color: "#0284c7" }}>{weatherData.imd_rainfall_baseline.actual_rainfall_mm} mm</strong></div>
+                <div><span style={{ color: "#64748b" }}>Monsoon Departure:</span> <strong style={{ color: weatherData.imd_rainfall_baseline.departure_pct >= 0 ? "#059669" : "#d97706" }}>{weatherData.imd_rainfall_baseline.departure_percentage}</strong></div>
+              </div>
+            </div>
+          )}
 
           {/* 5 Agro-Advisory Action Cards Grid */}
           <h2 style={{ fontSize: "16px", fontWeight: 800, color: "#0f172a", marginBottom: "14px" }}>
