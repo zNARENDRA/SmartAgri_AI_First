@@ -125,6 +125,72 @@ DATA_REGISTRY = [
         "license": "Official Agricultural Guidance",
         "attribution": "Weather-triggered agronomic advisories by ICAR-CRRI, ICAR-CICR, ICAR-IIWBR, ICAR-IIPR, and CRIDA.",
         "module_used": "AI Farmer Assistant RAG Layer & Farm Action Plan"
+    },
+    {
+        "id": "ds-12",
+        "name": "PlantDoc Real-World Plant Disease Dataset",
+        "category": "Computer Vision & Field Robustness",
+        "provider": "PlantDoc Project / GitHub (pratikkayal)",
+        "url": "https://github.com/pratikkayal/PlantDoc-Dataset",
+        "records": 2569,
+        "license": "MIT License",
+        "attribution": "Real-world field leaf disease images under natural lighting, background noise, and angle variations.",
+        "module_used": "Multi-Stage Plant Health Vision System"
+    },
+    {
+        "id": "ds-13",
+        "name": "Plant Pathology 2020 FGVC7 (Apple Foliar Diseases)",
+        "category": "Computer Vision & Leaf Pathology",
+        "provider": "FGVC7 / Kaggle (c/plant-pathology-2020-fgvc7)",
+        "url": "https://www.kaggle.com/c/plant-pathology-2020-fgvc7/data",
+        "records": 3651,
+        "license": "Kaggle Competition Dataset License",
+        "attribution": "Real-world Apple Scab, Cedar Apple Rust, and Healthy foliage collected in commercial orchards.",
+        "module_used": "Multi-Stage Plant Health Vision System (Apple Scab & Rust)"
+    },
+    {
+        "id": "ds-14",
+        "name": "Cassava Leaf Disease Classification Dataset",
+        "category": "Computer Vision & Tropical Crops",
+        "provider": "Kaggle Cassava Competition",
+        "url": "https://www.kaggle.com/competitions/cassava-leaf-disease-classification",
+        "records": 21397,
+        "license": "Kaggle Competition Dataset License",
+        "attribution": "Handheld camera cassava leaf imagery across Mosaic, Brown Streak, Green Mottle, Bacterial Blight, and Healthy.",
+        "module_used": "Multi-Stage Plant Health Vision System (Cassava Diagnostics)"
+    },
+    {
+        "id": "ds-15",
+        "name": "Indian Groundnut Leaf Disease Dataset (West Bengal)",
+        "category": "Computer Vision & Indian Field Imagery",
+        "provider": "Purba Medinipur Groundnut Study / Mendeley Data",
+        "url": "https://data.mendeley.com/datasets/x6x5jkk873/2",
+        "records": 1720,
+        "license": "CC BY 4.0",
+        "attribution": "Purba Medinipur smartphone camera groundnut foliage for Rust, Leaf Spot, Alternaria, Rosette, and Healthy.",
+        "module_used": "Multi-Stage Plant Health Vision System (Groundnut Rust & Field Robustness)"
+    },
+    {
+        "id": "ds-16",
+        "name": "Indian Groundnut Leaf Disease Dataset (Karnataka)",
+        "category": "Computer Vision & Indian Field Imagery",
+        "provider": "Koppal Groundnut Study / Mendeley Data",
+        "url": "https://data.mendeley.com/datasets/22p2vcbxfk/3",
+        "records": 10361,
+        "license": "CC BY 4.0",
+        "attribution": "Koppal district smartphone groundnut farm images across 6 classes (Deduplicated against WB dataset).",
+        "module_used": "Multi-Stage Plant Health Vision System (Groundnut Diagnostics)"
+    },
+    {
+        "id": "ds-17",
+        "name": "Rice Leaf Disease Dataset (RiceGuard 19k)",
+        "category": "Computer Vision & Cereal Leaf Health",
+        "provider": "Kaggle (chaitanyakamble69)",
+        "url": "https://www.kaggle.com/datasets/chaitanyakamble69/rice-leaf-disease-riceguard-19k-cleaned",
+        "records": 19500,
+        "license": "CC BY-SA 4.0",
+        "attribution": "Rice leaf pathology and pest damage imagery (Brown Spot, Hispa, Leaf Blast, Bacterial Blight, Tungro, Healthy).",
+        "module_used": "Multi-Stage Plant Health Vision System (Rice Diagnostics & Pest Routing)"
     }
 ]
 
