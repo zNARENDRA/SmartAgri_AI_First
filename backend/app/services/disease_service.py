@@ -8,6 +8,7 @@ from io import BytesIO
 from app.core.config import MODELS_DIR, DATA_PROCESSED, SQLITE_DB_PATH
 from app.db import query_as_dicts
 from app.schemas import DiseaseDiagnosisResponse
+from app.services.pytorch_disease_model import pytorch_disease_service
 
 def extract_image_features(image_bytes_or_pil):
     if isinstance(image_bytes_or_pil, bytes):
@@ -185,13 +186,22 @@ class DiseaseDetectionService:
         is_pest = best_cls in self.pest_remedies or "pest" in best_cls.lower() or "hispa" in best_cls.lower() or "borer" in best_cls.lower()
         rem = self.pest_remedies.get(best_cls) if is_pest else self.remedies.get(best_cls, {})
         
-        # Stage 5: Calibrated Uncertainty Layer
-        # High >= 0.60, Moderate >= 0.40, Low < 0.40
-        if best_conf >= 0.60:
-            confidence_tier = "High Confidence"
+        # Stage 4 & 5: PyTorch Model B Secondary Validation & Agreement Layer
+        pytorch_res = pytorch_disease_service.predict(image_data)
+        model_b_crop = pytorch_res.get("detected_crop", "Unknown")
+        model_b_cond = pytorch_res.get("condition", "Unknown")
+        model_b_conf = pytorch_res.get("confidence", 0.0)
+        
+        # Check consensus between Model A and Model B
+        crop_a = rem.get("crop", best_cls.split("___")[0])
+        models_agreed = (crop_a.lower() in model_b_crop.lower() or model_b_crop.lower() in crop_a.lower())
+        
+        # Calibrated Confidence Tier with Multi-Model Agreement Boost
+        if best_conf >= 0.60 and models_agreed:
+            confidence_tier = "High Confidence (Dual-Model Consensus)"
             is_low_confidence = False
         elif best_conf >= 0.40:
-            confidence_tier = "Moderate Confidence"
+            confidence_tier = "Moderate Confidence" + (" (Model Consensus)" if models_agreed else " (Model Divergence)")
             is_low_confidence = False
         else:
             confidence_tier = "Low Confidence / Uncertain"
@@ -203,7 +213,7 @@ class DiseaseDetectionService:
             status = "Uncertain"
             severity = "Uncertain"
             pathogen = "Unconfirmed (Low Model Confidence)"
-            symptoms = f"The multi-stage vision pipeline could not identify leaf symptoms with high confidence (Top candidate: {best_cls.replace('___', ' - ')} at {best_conf * 100:.1f}%)."
+            symptoms = f"The multi-stage vision pipeline could not identify leaf symptoms with high confidence (Model A: {best_cls.replace('___', ' - ')} at {best_conf * 100:.1f}%, Model B: {model_b_crop} {model_b_cond})."
             immediate_actions = "Please retake a closer, well-lit photograph of the affected leaf against a plain background, or consult a local Krishi Vigyan Kendra (KVK) extension officer."
             organic_treatment = "Specific bio-treatment recommendations are withheld due to low diagnosis confidence. Retake photo with clear leaf detail."
             chemical_treatment = "Chemical treatment and fungicide spray dosages are strictly withheld for uncertain predictions to prevent potential crop damage or improper pesticide usage."
@@ -230,6 +240,9 @@ class DiseaseDetectionService:
             "total_model_classes": len(model_classes),
             "confidence_tier": confidence_tier,
             "is_out_of_distribution": is_low_confidence,
+            "model_a_prediction": {"crop": crop_a, "class_id": best_cls, "confidence": f"{best_conf * 100:.1f}%"},
+            "model_b_prediction": {"crop": model_b_crop, "condition": model_b_cond, "confidence": f"{model_b_conf * 100:.1f}%", "source": "PyTorch ResNet9 (manthan89-py)"},
+            "models_agreed": models_agreed,
             "top_3_predictions": top_predictions
         }
 
@@ -250,8 +263,9 @@ class DiseaseDetectionService:
             chemical_treatment=chemical_treatment,
             prevention_measures=prevention_measures,
             top_predictions=top_predictions,
-            disclaimer="AI-assisted multi-stage vision diagnosis. Symptoms should be verified by a plant pathologist or local Krishi Vigyan Kendra (KVK) expert before applying chemical treatments.",
+            disclaimer="AI-assisted multi-stage vision diagnosis with dual-model consensus verification. Symptoms should be verified by a plant pathologist or local KVK expert before applying chemical treatments.",
             debug_info=debug_info
         )
+
 
 disease_service = DiseaseDetectionService()

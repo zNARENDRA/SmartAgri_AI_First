@@ -191,8 +191,20 @@ DATA_REGISTRY = [
         "license": "CC BY-SA 4.0",
         "attribution": "Rice leaf pathology and pest damage imagery (Brown Spot, Hispa, Leaf Blast, Bacterial Blight, Tungro, Healthy).",
         "module_used": "Multi-Stage Plant Health Vision System (Rice Diagnostics & Pest Routing)"
+    },
+    {
+        "id": "ds-18",
+        "name": "PyTorch Plant Disease Vision Model (manthan89-py)",
+        "category": "Deep Learning Vision Model & Open Source Attribution",
+        "provider": "GitHub (manthan89-py/Plant-Disease-Detection)",
+        "url": "https://github.com/manthan89-py/Plant-Disease-Detection",
+        "records": 54305,
+        "license": "MIT License",
+        "attribution": "38-class PlantVillage PyTorch ResNet CNN architecture for secondary vision model validation and agreement layer scoring.",
+        "module_used": "Multi-Model Agreement Layer & Secondary PyTorch ResNet Validation Engine"
     }
 ]
+
 
 def get_registry_summary():
     return {
