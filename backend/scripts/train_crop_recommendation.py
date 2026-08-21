@@ -1,5 +1,5 @@
 """
-KrishiKalyan AI - Crop Recommendation Model Training
+SmartAgri AI - Crop Recommendation Model Training
 Trains and compares multiple ML classifiers:
 - Random Forest Classifier
 - Gradient Boosting Classifier

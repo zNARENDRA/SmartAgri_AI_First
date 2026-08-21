@@ -91,7 +91,7 @@ def get_models_and_datasets_summary():
     ]
 
     return {
-        "platform_name": "KrishiKalyan AI",
+        "platform_name": "SmartAgri AI",
         "description": "Production-Quality AI Decision Support Platform for Indian Farmers",
         "datasets": datasets,
         "crop_recommendation_metrics": crop_metrics,

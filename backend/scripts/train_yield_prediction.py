@@ -1,5 +1,5 @@
 """
-KrishiKalyan AI - Crop Yield Prediction Model Training
+SmartAgri AI - Crop Yield Prediction Model Training
 Trains and compares regression algorithms:
 - Random Forest Regressor
 - Gradient Boosting Regressor

@@ -1,9 +1,9 @@
 @echo off
-title KrishiKalyan AI - One Click Launcher
+title SmartAgri AI - One Click Launcher
 color 0A
 
 echo ================================================================
-echo               KRISHIKALYAN AI (कृषिकल्याण AI)
+echo               SmartAgri AI (SmartAgri AI)
 echo      Production AI Decision Platform for Indian Farmers
 echo ================================================================
 echo.
@@ -28,8 +28,8 @@ if not exist "backend\.venv\Scripts\uvicorn.exe" (
     python backend\scripts\setup_disease_model.py
 )
 
-if not exist "backend\data\krishi_kalyan.db" (
-    echo [*] Seeding SQLite database krishi_kalyan.db ...
+if not exist "backend\data\smartagri.db" (
+    echo [*] Seeding SQLite database smartagri.db ...
     call backend\.venv\Scripts\activate.bat
     python backend\scripts\seed_sqlite_db.py
 )
@@ -43,14 +43,14 @@ if not exist "frontend\node_modules" (
 )
 
 echo [3/4] Starting FastAPI Backend Server on http://127.0.0.1:8000 ...
-start "KrishiKalyan AI - Backend Server (Port 8000)" cmd /k "cd /d %ROOT_DIR%backend && call .venv\Scripts\activate.bat && uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload"
+start "SmartAgri AI - Backend Server (Port 8000)" cmd /k "cd /d %ROOT_DIR%backend && call .venv\Scripts\activate.bat && uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload"
 
 echo [4/4] Starting React + Vite Frontend on http://127.0.0.1:5173 ...
-start "KrishiKalyan AI - Frontend (Port 5173)" cmd /k "cd /d %ROOT_DIR%frontend && npm run dev -- --host 127.0.0.1 --port 5173"
+start "SmartAgri AI - Frontend (Port 5173)" cmd /k "cd /d %ROOT_DIR%frontend && npm run dev -- --host 127.0.0.1 --port 5173"
 
 echo.
 echo ================================================================
-echo      KrishiKalyan AI is now running successfully!
+echo      SmartAgri AI is now running successfully!
 echo.
 echo      - Web Application:  http://127.0.0.1:5173
 echo      - Backend API Docs: http://127.0.0.1:8000/docs

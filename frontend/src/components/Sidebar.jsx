@@ -55,10 +55,10 @@ export default function Sidebar() {
           </div>
           <div>
             <div style={{ fontWeight: 800, fontSize: "15px", letterSpacing: "-0.02em", color: "#ffffff", lineHeight: 1.1 }}>
-              KrishiKalyan <span style={{ color: "#10b981" }}>AI</span>
+              SmartAgri <span style={{ color: "#10b981" }}>AI</span>
             </div>
             <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 500 }}>
-              Kisan AI Sahayata Desk
+              SmartAgri — AI Farm Assistant
             </div>
           </div>
         </div>
@@ -91,7 +91,7 @@ export default function Sidebar() {
       <div className="sidebar-footer">
         <div style={{ fontSize: "11px", color: "#94a3b8", display: "flex", alignItems: "center", gap: "6px" }}>
           <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#10b981", display: "inline-block", flexShrink: 0 }}></span>
-          <span>KrishiKalyan AI</span>
+          <span>SmartAgri AI</span>
         </div>
         <div style={{ fontSize: "10px", color: "#64748b", marginTop: "2px" }}>
           Smart Farming Companion

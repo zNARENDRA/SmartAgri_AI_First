@@ -69,7 +69,7 @@ export default function Navbar() {
           </div>
           <div>
             <div style={{ fontWeight: 800, fontSize: "16px", letterSpacing: "-0.02em", color: "#0f172a", lineHeight: 1.1 }}>
-              KrishiKalyan <span style={{ color: "#059669" }}>AI</span>
+              SmartAgri <span style={{ color: "#059669" }}>AI</span>
             </div>
             <div className="navbar-subtitle-hide" style={{ fontSize: "10px", color: "#64748b", fontWeight: 500 }}>
               AI Platform for Farmers

@@ -1,5 +1,5 @@
 """
-KrishiKalyan AI - PyTorch ResNet Vision Model Service
+SmartAgri AI - PyTorch ResNet Vision Model Service
 Implements 38-class ResNet9 Deep Convolutional Neural Network for Plant Leaf Pathology
 Reference: GitHub (manthan89-py/Plant-Disease-Detection)
 """

@@ -1,5 +1,5 @@
 """
-KrishiKalyan AI - Standalone Plant Disease Model Evaluation & Benchmark Script
+SmartAgri AI - Standalone Plant Disease Model Evaluation & Benchmark Script
 Evaluates:
   - Model A (Primary Engine): Multi-Scale Vision Model (plant_disease_model.joblib)
   - Model B (Secondary Engine): PyTorch ResNet9 CNN Model (manthan89-py)
@@ -21,7 +21,7 @@ from app.services.pytorch_disease_model import pytorch_disease_service
 
 def evaluate_models_side_by_side():
     print("=========================================================================")
-    print("      KRISHIKALYAN AI — PLANT DISEASE VISION ENGINE BENCHMARK")
+    print("      SmartAgri AI — PLANT DISEASE VISION ENGINE BENCHMARK")
     print("=========================================================================")
     print("Comparing:")
     print("  [Model A]: Multi-Scale Vision Engine (plant_disease_model.joblib)")

@@ -1,5 +1,5 @@
 """
-KrishiKalyan AI - Multi-Source Plant Health & Rust Evaluation Test Suite
+SmartAgri AI - Multi-Source Plant Health & Rust Evaluation Test Suite
 Verifies:
 1. Image Quality Gate (low contrast / tiny images trigger retry alert)
 2. Rust Evaluation Subset (Apple Cedar Rust vs Groundnut Rust vs Healthy leaves)

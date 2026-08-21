@@ -1,5 +1,5 @@
 """
-KrishiKalyan AI - Multi-Source Plant Disease & Health Vision Model Setup
+SmartAgri AI - Multi-Source Plant Disease & Health Vision Model Setup
 Trains a multi-scale vision model over 35+ canonical disease & pest classes from:
 1. PlantVillage Dataset (27 classes)
 2. PlantDoc Real-World Field Dataset

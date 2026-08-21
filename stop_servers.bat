@@ -1,9 +1,9 @@
 @echo off
-title KrishiKalyan AI - Stop Servers
+title SmartAgri AI - Stop Servers
 color 0C
 
 echo ================================================================
-echo          Stopping KrishiKalyan AI Backend & Frontend
+echo          Stopping SmartAgri AI Backend & Frontend
 echo ================================================================
 echo.
 

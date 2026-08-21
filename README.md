@@ -1,4 +1,4 @@
-# KrishiKalyan AI (कृषिकल्याण AI)
+# SmartAgri AI (SmartAgri AI)
 ### Production-Quality AI Decision Support Platform for Indian Farmers
 
 > **National Hackathon Problem Statement**: *“AI for Farmers — provide crop advisory, disease detection, weather-aware recommendations, market intelligence, and assistance in accessing relevant government schemes.”*
@@ -7,11 +7,11 @@
 
 ## 🌟 Executive Summary & Key Highlights
 
-**KrishiKalyan AI** is an end-to-end, production-grade agricultural decision support platform built specifically for Indian smallholder and commercial farmers. Instead of a static prototype or isolated demo pages, KrishiKalyan AI integrates **five real-world Kaggle datasets** stored in a high-performance **SQLite Relational Database Engine (`krishi_kalyan.db`)**, trained Machine Learning models, live agro-meteorological advisory APIs, Mandi wholesale price trends, semantic government subsidy discovery, a tool-augmented central AI assistant, and an actionable **8-point Farm Action Plan**.
+**SmartAgri AI** is an end-to-end, production-grade agricultural decision support platform built specifically for Indian smallholder and commercial farmers. Instead of a static prototype or isolated demo pages, SmartAgri AI integrates **five real-world Kaggle datasets** stored in a high-performance **SQLite Relational Database Engine (`smartagri.db`)**, trained Machine Learning models, live agro-meteorological advisory APIs, Mandi wholesale price trends, semantic government subsidy discovery, a tool-augmented central AI assistant, and an actionable **8-point Farm Action Plan**.
 
 ```
                            ┌──────────────────────────────────────────────┐
-                           │      KrishiKalyan AI Platform Architecture   │
+                           │      SmartAgri AI Platform Architecture   │
                            └──────────────────────┬───────────────────────┘
                                                   │
          ┌────────────────────────────────────────┼────────────────────────────────────────┐
@@ -130,7 +130,7 @@ Synthesizes an 8-point comprehensive executive summary:
 ## 📁 Clean Professional Project Structure
 
 ```
-krishi_kalyan_ai/
+smartagri/
 ├── backend/
 │   ├── app/
 │   │   ├── core/

@@ -28,7 +28,7 @@ export default function AIAssistant() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: `Namaste ${profile.name}! 🙏 I am your **AI Farmer Assistant (KrishiKalyan AI)**.\n\nI combine real-time weather, agronomic intelligence, soil health data, mandi prices, and government schemes to assist your farm decisions.\n\nHow can I help your farm today?`,
+      content: `Namaste ${profile.name}! 🙏 I am your **AI Farmer Assistant (SmartAgri AI)**.\n\nI combine real-time weather, agronomic intelligence, soil health data, mandi prices, and government schemes to assist your farm decisions.\n\nHow can I help your farm today?`,
       tools: ["Agricultural Intelligence Hub", "Farm Profile Context"],
       followups: [
         "Which crop should I grow in my soil?",

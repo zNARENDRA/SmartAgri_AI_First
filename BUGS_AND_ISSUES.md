@@ -1,6 +1,6 @@
 # 🐛 System Audit & Bug Resolution Report
 
-This document records the resolved diagnostic audit of **KrishiKalyan AI**, detailing the code bugs, warnings, edge cases, and runtime issues fixed across the backend, batch launchers, and database services.
+This document records the resolved diagnostic audit of **SmartAgri AI**, detailing the code bugs, warnings, edge cases, and runtime issues fixed across the backend, batch launchers, and database services.
 
 ---
 
@@ -53,4 +53,4 @@ This document records the resolved diagnostic audit of **KrishiKalyan AI**, deta
 | **Edge Case**| `database.py` | Potential database lock under concurrent writes | Low | **Resolved** |
 
 ---
-*Report generated for KrishiKalyan AI codebase.*
+*Report generated for SmartAgri AI codebase.*

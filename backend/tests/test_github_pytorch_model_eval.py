@@ -1,5 +1,5 @@
 """
-KrishiKalyan AI - PyTorch ResNet Model Evaluation & Agreement Layer Tests
+SmartAgri AI - PyTorch ResNet Model Evaluation & Agreement Layer Tests
 """
 
 import os

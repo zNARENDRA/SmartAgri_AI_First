@@ -1,5 +1,5 @@
 """
-KrishiKalyan AI - PyTorch ResNet9 Plant Disease Model Fast Training & Weights Exporter
+SmartAgri AI - PyTorch ResNet9 Plant Disease Model Fast Training & Weights Exporter
 Trains 9-layer Deep Residual Neural Network across PlantVillage categories and exports
 PyTorch state_dict to backend/models/plant_disease_model_pytorch.pt.
 """

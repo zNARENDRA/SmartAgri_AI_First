@@ -1,5 +1,5 @@
 """
-KrishiKalyan AI - Plant Village Leaf Disease Vision Model Setup & Training
+SmartAgri AI - Plant Village Leaf Disease Vision Model Setup & Training
 Extracts multi-scale deep spatial & morphological features from leaf images,
 trains a high-accuracy vision classifier over PlantVillage categories,
 and exports model weights, evaluation metrics, and remedies.

@@ -47,7 +47,7 @@ def execute_statement(statement: str, params: Tuple = (), db_path: str = SQLITE_
 
 def init_tables(conn: sqlite3.Connection):
     """
-    Initializes SQLite tables and indexes for KrishiKalyan AI datasets.
+    Initializes SQLite tables and indexes for SmartAgri AI datasets.
     """
     cursor = conn.cursor()
     

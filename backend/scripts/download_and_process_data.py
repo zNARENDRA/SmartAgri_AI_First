@@ -1,5 +1,5 @@
 """
-KrishiKalyan AI - Data Ingestion & Preprocessing Pipeline
+SmartAgri AI - Data Ingestion & Preprocessing Pipeline
 Processes and validates all 5 required Kaggle datasets:
 1. Dataset 1: Crop Recommendation (arkabhowmik/crop-recommendation)
 2. Dataset 2: Plant Village Leaf Disease (tushar5harma/plant-village-dataset-updated)
@@ -1290,7 +1290,7 @@ def process_icar_advisories():
 # -------------------------------------------------------------
 if __name__ == "__main__":
     print("==================================================")
-    print("KrishiKalyan AI - Data Ingestion & Preprocessing")
+    print("SmartAgri AI - Data Ingestion & Preprocessing")
     print("==================================================")
     
     d1 = process_crop_recommendation()
@@ -1305,7 +1305,7 @@ if __name__ == "__main__":
     d10 = process_pest_data()
     d11 = process_icar_advisories()
     
-    # Step 6: Seed SQLite database krishi_kalyan.db
+    # Step 6: Seed SQLite database smartagri.db
     print("\n[6/6] Seeding SQLite Database with all 11 Datasets...")
     try:
         from scripts.seed_sqlite_db import seed_database

@@ -120,7 +120,7 @@ export default function LandingPage() {
       <section style={{ marginBottom: "40px" }}>
         <div style={{ marginBottom: "20px" }}>
           <h2 style={{ fontSize: "22px", fontWeight: 800, color: "#0f172a", margin: 0 }}>
-            How KrishiKalyan AI Empowers Your Farm
+            How SmartAgri AI Empowers Your Farm
           </h2>
           <p style={{ fontSize: "13px", color: "#64748b", marginTop: "4px" }}>
             A complete decision workflow from soil preparation to market realization.

@@ -189,7 +189,7 @@ class AIAssistantOrchestrator:
         else:
             tools = ["General Agronomy Intelligence", "Central AI Farmer Assistant"]
             reply = (
-                f"Namaste {prof.name}! 🙏 I am your **AI Farmer Assistant (KrishiKalyan AI)**.\n\n"
+                f"Namaste {prof.name}! 🙏 I am your **AI Farmer Assistant (SmartAgri AI)**.\n\n"
                 f"I combine real-time weather, trained machine learning models, soil datasets, Indian mandi prices, and government schemes to assist your farm decisions:\n\n"
                 f"Here are questions you can ask me:\n"
                 f"- *'Which crop should I grow in my soil?'*\n"

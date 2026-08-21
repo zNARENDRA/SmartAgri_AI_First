@@ -119,7 +119,7 @@ export default function Dashboard() {
       <div className="dashboard-welcome-banner">
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", color: "#a7f3d0", fontWeight: 600, marginBottom: "4px" }}>
-            <Sparkles size={14} /> Kisan AI Sahayata Desk
+            <Sparkles size={14} /> SmartAgri — AI Farm Assistant
           </div>
           <h1 style={{ fontSize: "24px", fontWeight: 800, letterSpacing: "-0.02em", margin: 0 }}>
             Namaste, {profile.name}!
