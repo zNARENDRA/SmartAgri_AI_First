@@ -53,10 +53,41 @@ class WeatherService:
     def __init__(self):
         self.client = httpx.Client(timeout=8.0)
 
+    def _reverse_geocode(self, lat: float, lon: float) -> str:
+        """Reverse geocode lat/lon to a human-readable place name using Nominatim (OpenStreetMap)."""
+        try:
+            url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json&zoom=10&addressdetails=1&accept-language=en"
+            resp = self.client.get(url, headers={"User-Agent": "SmartAgriAI/1.0"})
+            if resp.status_code == 200:
+                data = resp.json()
+                addr = data.get("address", {})
+                # Try city/town/village, then district, then county
+                place = addr.get("city") or addr.get("town") or addr.get("village") or addr.get("suburb") or addr.get("county") or addr.get("state_district") or ""
+                state = addr.get("state", "")
+                if place and state:
+                    return f"{place}, {state}"
+                elif place:
+                    return place
+                elif state:
+                    return state
+                # Fallback to display_name
+                display = data.get("display_name", "")
+                if display:
+                    parts = [p.strip() for p in display.split(",")]
+                    # Return first 2 meaningful parts
+                    return ", ".join(parts[:2]) if len(parts) >= 2 else parts[0]
+        except Exception as e:
+            print(f"[Reverse Geocoding Notice] Fallback for ({lat}, {lon}): {e}")
+        return ""
+
     def resolve_location(self, location_query: str = "", lat: float = None, lon: float = None):
         """Resolves location query or lat/lon coordinates to exact latitude, longitude, and display name."""
         if lat is not None and lon is not None:
-            return float(lat), float(lon), f"GPS Location ({float(lat):.2f}°, {float(lon):.2f}°)"
+            # Reverse geocode to get a real place name instead of raw coordinates
+            display_name = self._reverse_geocode(float(lat), float(lon))
+            if not display_name:
+                display_name = f"GPS Location ({float(lat):.2f}°, {float(lon):.2f}°)"
+            return float(lat), float(lon), display_name
 
         if not location_query or location_query.strip() == "":
             return 19.9975, 73.7898, "Nashik, Maharashtra"

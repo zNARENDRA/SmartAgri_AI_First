@@ -30,7 +30,9 @@ import {
 
 export default function WeatherAdvisory() {
   const { profile } = useFarmer();
-  const [locationInput, setLocationInput] = useState(profile.district || "Nashik");
+  // Build location from farmer profile: "District, State" or fallback
+  const profileLocation = [profile.district, profile.state].filter(Boolean).join(", ") || "Nashik, Maharashtra";
+  const [locationInput, setLocationInput] = useState(profileLocation);
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -67,7 +69,8 @@ export default function WeatherAdvisory() {
   };
 
   useEffect(() => {
-    fetchWeather(locationInput);
+    // Load weather for farmer's profile location on page open
+    fetchWeather(profileLocation);
   }, []);
 
   const handleSearch = (e) => {
