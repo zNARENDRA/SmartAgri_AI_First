@@ -1,0 +1,14 @@
+# Render.com Infrastructure-as-Code Blueprint
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: smartagri-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: bash build.sh
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"

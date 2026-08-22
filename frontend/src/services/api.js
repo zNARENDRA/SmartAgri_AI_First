@@ -1,4 +1,6 @@
-const API_BASE = "/api";
+// In production (Vercel), VITE_API_URL points to the deployed backend (e.g. https://smartagri-backend.onrender.com/api)
+// In local dev, the Vite proxy handles /api -> localhost:8000
+const API_BASE = import.meta.env.VITE_API_URL || "/api";
 
 export async function fetchApi(endpoint, options = {}) {
   try {
