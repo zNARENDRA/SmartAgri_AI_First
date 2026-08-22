@@ -73,7 +73,7 @@ class GovernmentSchemeService:
             total_schemes=len(results),
             results=results,
             categories=["All"] + categories,
-            disclaimer="Eligibility and scheme availability should be verified on the official government portal (e.g., MyScheme.gov.in, PM-KISAN, PMFBY) before applying. Schemes may be subject to state-level budgetary allocations and enrollment cycles."
+            disclaimer=f"DEBUG len(self.schemes_raw): {len(self.schemes_raw)} category: {category} query: {query}"
         )
 
     def match_for_profile(self, profile: FarmerProfile) -> List[SchemeItem]:

@@ -31,6 +31,7 @@ if not exist "backend\.venv\Scripts\uvicorn.exe" (
 if not exist "backend\data\smartagri.db" (
     echo [*] Seeding SQLite database smartagri.db ...
     call backend\.venv\Scripts\activate.bat
+    python backend\scripts\download_and_process_data.py
     python backend\scripts\seed_sqlite_db.py
 )
 
@@ -42,11 +43,11 @@ if not exist "frontend\node_modules" (
     cd /d "%ROOT_DIR%"
 )
 
-echo [3/4] Starting FastAPI Backend Server on http://127.0.0.1:8000 ...
-start "SmartAgri AI - Backend Server (Port 8000)" cmd /k "cd /d %ROOT_DIR%backend && call .venv\Scripts\activate.bat && uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload"
+echo [3/4] Starting FastAPI Backend Server on 0.0.0.0:8000 (LAN Accessible)...
+start "SmartAgri AI - Backend Server (Port 8000)" cmd /k "cd /d %ROOT_DIR%backend && call .venv\Scripts\activate.bat && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
 
-echo [4/4] Starting React + Vite Frontend on http://127.0.0.1:5173 ...
-start "SmartAgri AI - Frontend (Port 5173)" cmd /k "cd /d %ROOT_DIR%frontend && npm run dev -- --host 127.0.0.1 --port 5173"
+echo [4/4] Starting React + Vite Frontend on 0.0.0.0:5173 (LAN Accessible)...
+start "SmartAgri AI - Frontend (Port 5173)" cmd /k "cd /d %ROOT_DIR%frontend && npm run dev -- --host 0.0.0.0 --port 5173"
 
 echo.
 echo ================================================================

@@ -27,7 +27,8 @@ export default function MobileDrawer() {
     setMobileDrawerOpen,
     setShowActionPlanModal,
     setShowDemoTour,
-    setShowCameraScanner
+    setShowCameraScanner,
+    refreshActionPlan
   } = useFarmer();
 
   if (!mobileDrawerOpen) return null;
@@ -117,8 +118,9 @@ export default function MobileDrawer() {
         {/* Drawer Footer Actions */}
         <div className="mobile-drawer-footer">
           <button
-            onClick={() => {
+            onClick={async () => {
               setMobileDrawerOpen(false);
+              await refreshActionPlan();
               setShowActionPlanModal(true);
             }}
             className="btn btn-amber"

@@ -34,7 +34,11 @@ export default function DiseaseDetection() {
     setShowCameraScanner, 
     askAiAboutDisease, 
     setShowActionPlanModal, 
-    refreshActionPlan 
+    refreshActionPlan,
+    globalDiseaseResult,
+    setGlobalDiseaseResult,
+    globalDiseaseImage,
+    setGlobalDiseaseImage
   } = useFarmer();
 
   const [samples, setSamples] = useState([]);
@@ -51,6 +55,21 @@ export default function DiseaseDetection() {
       setSamples(data);
     }).catch(console.error);
   }, []);
+
+  // Bridge global scanner results into local view
+  useEffect(() => {
+    if (globalDiseaseResult) {
+      setResult(globalDiseaseResult);
+      setImagePreview(globalDiseaseImage);
+      setSelectedSample(null);
+      setUploadedFile(new File([], "scanned_leaf.jpg")); // mock file just for name display
+      setLoading(false);
+      
+      // Clear global state so it doesn't reappear on normal navigation
+      setGlobalDiseaseResult(null);
+      setGlobalDiseaseImage(null);
+    }
+  }, [globalDiseaseResult, globalDiseaseImage, setGlobalDiseaseResult, setGlobalDiseaseImage]);
 
   const resetStateForNewInput = () => {
     setResult(null);
@@ -80,7 +99,7 @@ export default function DiseaseDetection() {
   const handleDiagnoseSample = async (filename) => {
     setSelectedSample(filename);
     setUploadedFile(null);
-    setImagePreview(`http://127.0.0.1:8000/static/samples/${filename}`);
+    setImagePreview(`/static/samples/${filename}`);
     resetStateForNewInput();
 
     try {
@@ -134,9 +153,8 @@ export default function DiseaseDetection() {
           <div className="card" style={{ textAlign: "center", borderStyle: "dashed", borderWidth: "2px", borderColor: "#059669", padding: "20px 14px" }}>
             <input
               type="file"
-              id="leaf-upload"
+              id="leaf-gallery-upload"
               accept="image/*"
-              capture="environment"
               onChange={handleFileUpload}
               style={{ display: "none" }}
             />
@@ -165,7 +183,7 @@ export default function DiseaseDetection() {
                 </button>
 
                 <label
-                  htmlFor="leaf-upload"
+                  htmlFor="leaf-gallery-upload"
                   className="btn btn-secondary"
                   style={{ padding: "8px 16px", fontSize: "13px", cursor: "pointer" }}
                 >
@@ -205,7 +223,7 @@ export default function DiseaseDetection() {
                   }}
                 >
                   <img
-                    src={`http://127.0.0.1:8000${s.url}`}
+                    src={s.url}
                     alt={s.label}
                     style={{ width: "100%", height: "55px", objectFit: "cover", borderRadius: "6px", marginBottom: "2px" }}
                   />
@@ -340,7 +358,7 @@ export default function DiseaseDetection() {
                       <Camera size={16} /> Retake Photo
                     </button>
                     <label
-                      htmlFor="leaf-upload"
+                      htmlFor="leaf-gallery-upload"
                       className="btn"
                       style={{ background: "rgba(255,255,255,0.2)", color: "#ffffff", padding: "9px 16px", fontSize: "13px", fontWeight: 700, cursor: "pointer" }}
                     >

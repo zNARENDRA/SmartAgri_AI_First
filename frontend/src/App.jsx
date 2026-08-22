@@ -22,7 +22,8 @@ import FarmerProfile from "./pages/FarmerProfile";
 import ModelEvaluationInfo from "./pages/ModelEvaluationInfo";
 
 function MainApp() {
-  const { activeTab } = useFarmer();
+  const useFarmerContextInApp = useFarmer();
+  const { activeTab } = useFarmerContextInApp;
 
   const renderActivePage = () => {
     switch (activeTab) {
@@ -71,7 +72,10 @@ function MainApp() {
       <MobileDrawer />
 
       {/* Camera Leaf Scanner Modal */}
-      <PlantCameraScanner />
+      <PlantCameraScanner onScanComplete={(res, img) => {
+        useFarmerContextInApp.setGlobalDiseaseResult(res);
+        useFarmerContextInApp.setGlobalDiseaseImage(img);
+      }} />
 
       {/* Global Modals */}
       <DemoTourModal />

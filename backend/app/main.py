@@ -67,6 +67,24 @@ def health_check():
         ]
     }
 
+@app.get("/debug")
+def debug_info():
+    import os
+    from app.core.config import SQLITE_DB_PATH, BASE_DIR
+    from app.services.scheme_service import scheme_service
+    from app.services.market_service import market_service
+    import sys
+    return {
+        "cwd": os.getcwd(),
+        "base_dir": BASE_DIR,
+        "sqlite_db_path": SQLITE_DB_PATH,
+        "db_exists": os.path.exists(SQLITE_DB_PATH),
+        "schemes_len": len(scheme_service.schemes_raw),
+        "market_shape": list(market_service.df.shape) if not market_service.df.empty else [0, 0],
+        "sys_executable": sys.executable,
+        "main_file": __file__
+    }
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

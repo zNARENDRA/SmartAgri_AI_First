@@ -22,7 +22,8 @@ export default function PlantCameraScanner({ onScanComplete }) {
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
+  const galleryInputRef = useRef(null);
 
   const [stream, setStream] = useState(null);
   const [facingMode, setFacingMode] = useState("environment"); // "environment" = rear camera, "user" = front
@@ -296,24 +297,24 @@ export default function PlantCameraScanner({ onScanComplete }) {
             </div>
           )}
 
-          {/* Permission Error / Fallback State */}
+          {/* Permission Error / Native Camera Fallback State */}
           {!capturedPreview && permissionError && (
-            <div className="camera-fallback-card">
-              <div style={{ width: "54px", height: "54px", borderRadius: "50%", background: "rgba(239, 68, 68, 0.15)", color: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
-                <AlertTriangle size={28} />
+            <div className="camera-fallback-card" style={{ padding: "40px 20px", textAlign: "center" }}>
+              <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "rgba(16, 185, 129, 0.15)", color: "#10b981", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+                <Camera size={32} />
               </div>
-              <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#ffffff", marginBottom: "6px" }}>
-                Camera Access Needed
+              <h3 style={{ fontSize: "18px", fontWeight: 800, color: "#ffffff", marginBottom: "8px" }}>
+                Launch Device Camera
               </h3>
-              <p style={{ fontSize: "13px", color: "#94a3b8", lineHeight: 1.5, margin: "0 0 18px 0" }}>
+              <p style={{ fontSize: "13px", color: "#cbd5e1", lineHeight: 1.5, margin: "0 auto 24px auto", maxWidth: "280px" }}>
                 {permissionError}
               </p>
               <button
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => cameraInputRef.current?.click()}
                 className="btn btn-primary"
-                style={{ width: "100%", padding: "12px", fontSize: "14px" }}
+                style={{ width: "100%", maxWidth: "260px", margin: "0 auto", padding: "14px", fontSize: "15px", background: "linear-gradient(135deg, #10b981 0%, #059669 100%)", display: "flex", justifyContent: "center", gap: "8px" }}
               >
-                <Upload size={16} /> Choose Photo from Gallery
+                <Camera size={18} /> <strong>Open Camera / Gallery</strong>
               </button>
             </div>
           )}
@@ -329,12 +330,20 @@ export default function PlantCameraScanner({ onScanComplete }) {
 
         {/* Action Controls Footer */}
         <div className="camera-modal-footer">
-          {/* Hidden File Input for Gallery / System Camera fallback */}
+          {/* Hidden File Input for System Camera fallback */}
           <input
             type="file"
-            ref={fileInputRef}
+            ref={cameraInputRef}
             accept="image/*"
             capture="environment"
+            onChange={handleGalleryUpload}
+            style={{ display: "none" }}
+          />
+          {/* Hidden File Input for Gallery fallback */}
+          <input
+            type="file"
+            ref={galleryInputRef}
+            accept="image/*"
             onChange={handleGalleryUpload}
             style={{ display: "none" }}
           />
@@ -344,7 +353,7 @@ export default function PlantCameraScanner({ onScanComplete }) {
             <div className="camera-live-controls">
               {/* Gallery Fallback Button */}
               <button
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => galleryInputRef.current?.click()}
                 className="camera-btn-secondary"
                 title="Upload from Gallery"
               >

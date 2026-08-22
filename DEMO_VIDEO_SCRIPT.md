@@ -1,75 +1,88 @@
 # 🎥 Hackathon Demo Video Script: SmartAgri AI
 
 **Overall Tips for Recording:**
-*   **Keep it moving:** Don't linger too long on one screen; keep the pace energetic.
-*   **Split screen or picture-in-picture:** Have your face in the corner (if comfortable) and record your screen clearly at 1080p.
-*   **Pre-load data:** Have the local server running and the datasets already seeded so you don't waste time waiting for things to load.
-
-## 🛠️ Recommended Tools for Recording
-*   **OBS Studio (Best & Free):** Download from obsproject.com. It allows you to easily capture your screen and webcam at the same time, giving a professional look.
-*   **Loom (Easiest):** A Chrome extension/app that records your screen and camera simultaneously and instantly uploads it to the cloud. You can download the video afterward.
-*   **Zoom/Google Meet:** Start a private meeting, share your screen, turn on your camera, and hit record.
+*   **Use the Built-in Demo Tour:** The platform already has a built-in "Interactive Platform Walkthrough". We will use this to guide the presentation.
+*   **Pacing:** Spend about 30-40 seconds on each of the 9 steps to keep the video under 7 minutes.
+*   **Recording Tools:** Use **OBS Studio** or **Loom** to capture your screen and webcam at the same time.
 
 ---
 
-## 📝 The Script (Target: 5-6 Minutes)
+## 📝 The Script (Target: 6-7 Minutes)
 
-### ⏱️ 0:00 - 0:45 | Intro & Overview
-**[Visual: Start on the SmartAgri AI Landing Page. Scroll quickly to show the UI.]**
+### ⏱️ 0:00 - 0:30 | Intro & Launching the Tour
+**[Visual: Start on the SmartAgri AI Landing Page. Click "Enter Dashboard". On the Dashboard Navbar, click the "Demo Tour" button to open the Interactive Walkthrough modal.]**
 
 **Speaker:**
-> "Hello judges! Welcome to **SmartAgri AI**, a production-grade agricultural decision platform for Indian farmers. We successfully merged all **five real-world Kaggle datasets** into a single dashboard powered by a Python FastAPI backend and a React frontend. Let's jump into the demo."
+> "Hello judges! Welcome to **SmartAgri AI**, a production-grade agricultural decision platform for Indian farmers. We've successfully integrated five real-world Kaggle datasets into a single, cohesive dashboard powered by FastAPI and React. To show you how it works, I'll be following our platform's built-in Interactive Demo Tour. Let's begin."
 
 ---
 
-### ⏱️ 0:45 - 1:45 | Crop & Yield (Datasets 1 & 3)
-**[Visual: Go to Farmer Dashboard -> 'Crop Advisor' tab, tweak a slider. Then click 'Yield Predictor'.]**
+### ⏱️ 0:30 - 1:00 | Step 1: Farmer Profile Setup
+**[Visual: Demo Tour shows Step 1. Click "Go to Profile". Show the Profile tab with the presets.]**
 
 **Speaker:**
-> "Using **Dataset 1 (Crop Recommendation)**, our Random Forest model analyzes live soil N-P-K, pH, and weather to recommend the ideal crop—like Rice—with 98% accuracy. 
-> 
-> Once the crop is chosen, our Yield Predictor, powered by **Dataset 3 (Crop Yield)**, uses Gradient Boosting to forecast the exact yield in Quintals per Acre based on acreage, rainfall, and fertilizer usage, so farmers can plan their revenue before sowing."
+> "Step 1 is setting up the Farmer Profile. Our platform acts as a personalized assistant. By configuring landholding size, soil N-P-K nutrients, pH, and location down to the village level, every single recommendation in the app becomes hyper-personalized to the farmer's exact context."
 
 ---
 
-### ⏱️ 1:45 - 2:45 | AI Disease Scanner (Dataset 2)
-**[Visual: Go to 'Disease Scanner'. Upload a leaf photo or use the camera demo.]**
+### ⏱️ 1:00 - 1:30 | Step 2 & 3: Soil Analysis & AI Crop Recommendation
+**[Visual: Open Demo Tour -> Step 3. Click "Evaluate Crops" to jump to the Crop Advisor tab. Tweak a soil slider.]**
 
 **Speaker:**
-> "For crop health, we integrated **Dataset 2 (PlantVillage)** into a PyTorch Vision Classifier. Farmers simply scan a leaf with their phone. 
-> 
-> **[Visual: Show diagnosis result]**
->
-> The AI instantly detects the pathogen—like Early Blight—and provides both organic bio-cures and chemical fungicides with exact dosage dilutions."
+> "Moving to Steps 2 and 3: Soil Analysis and Crop Recommendation. Using **Dataset 1**, our Random Forest model analyzes the farmer's live soil nutrients, pH, and local rainfall to recommend the absolute best crops to plant. As we tweak the soil nitrogen levels here, you can see the AI instantly re-evaluates the top recommendations with 98% accuracy."
 
 ---
 
-### ⏱️ 2:45 - 3:45 | Mandi Market Intelligence (Dataset 4)
-**[Visual: Go to 'Mandi Prices'. Show the trend chart and the 'Where to Sell' card.]**
+### ⏱️ 1:30 - 2:00 | Step 4: Crop Yield Prediction
+**[Visual: Open Demo Tour -> Step 4. Click "Predict Yield". Show the Yield Predictor interface.]**
 
 **Speaker:**
-> "At harvest, farmers need to know where to sell. We ingested over 57,000 historical price records from **Dataset 4 (Mandi Prices)**. 
->
-> Farmers can see live trends, but our standout feature is the **Smart Ranker**. It scans neighboring APMC mandis to tell the farmer if driving 20 extra kilometers will yield a higher profit."
+> "Step 4 is Yield Prediction. Leveraging **Dataset 3 (Crop Yields)** combined with historical weather data, our machine learning pipeline estimates the expected yield in both Tons per Hectare and Quintals per Acre. This helps farmers set realistic harvest targets based on their specific acreage and fertilizer inputs before they even sow the seeds."
 
 ---
 
-### ⏱️ 3:45 - 5:00 | Government Schemes & The Action Plan (Dataset 5)
-**[Visual: Briefly click 'Govt Schemes', then hit the big 'Action Plan' button to generate the report.]**
+### ⏱️ 2:00 - 2:30 | Step 5: Weather-Aware Agro-Advisory
+**[Visual: Open Demo Tour -> Step 5. Click "Check Weather". Show the Weather tab with the 7-day forecast and alerts.]**
 
 **Speaker:**
-> "We also use **Dataset 5 (Govt Schemes)** to match the farmer's landholding profile to eligible subsidies, providing verified links to MyScheme.gov.in. 
-> 
-> **[Visual: Scroll through the generated Action Plan, then open the AI Assistant Chat in the corner]**
->
-> But farmers don't want to check five tabs. By clicking **Generate Action Plan**, our engine synthesizes all live data into a single 8-point checklist. And if they have questions, they can chat with our natural language AI assistant, which orchestrates these tools seamlessly."
+> "Step 5 brings in Weather Advisory. We don't just show the forecast; we provide actionable rules. By analyzing the upcoming 7-day weather, the platform generates alerts for irrigation timing, optimal pesticide spraying windows, heat stress, and fungal risks tailored to the farmer's current crop."
 
 ---
 
-### ⏱️ 5:00 - 6:00 | Outro & Architecture
-**[Visual: Show the GitHub repo or the run.bat file in VS Code.]**
+### ⏱️ 2:30 - 3:15 | Step 6: Plant Disease Detection
+**[Visual: Open Demo Tour -> Step 6. Click "Diagnose Leaf". Use the 'Load Sample Leaf' dropdown to run an instant diagnosis.]**
 
 **Speaker:**
-> "SmartAgri AI is not just a mockup—it's a high-performance system using SQLite for sub-millisecond queries. We've included a one-click `run.bat` script in our GitHub repo so you can launch the entire stack locally. 
->
-> Thank you for your time, and we believe this is the comprehensive AI solution Indian farmers need today."
+> "For Step 6, we tackle crop health using **Dataset 2 (PlantVillage)**. Farmers can upload photos of diseased leaves directly from their phones. Let's load a sample leaf here. The Convolutional Neural Network instantly identifies the condition out of 27 classes—like Potato Early Blight—and immediately prescribes biological, organic, and chemical remedies to save the crop."
+
+---
+
+### ⏱️ 3:15 - 4:00 | Step 7: India Mandi Intelligence
+**[Visual: Open Demo Tour -> Step 7. Click "View Mandi Rates". Show the Market Intelligence tab, select a commodity, and show the 'Where to Sell' ranker.]**
+
+**Speaker:**
+> "Step 7 is all about post-harvest profitability. We integrated **Dataset 4**, encompassing over 57,000 real-world Mandi wholesale price records. We analyze historical trends and price volatility. Our 'Where to Sell' smart ranker actively calculates the price spread across nearby districts, advising farmers exactly which Mandi will yield the highest premium for their harvest."
+
+---
+
+### ⏱️ 4:00 - 4:45 | Step 8: Government Scheme Discovery
+**[Visual: Open Demo Tour -> Step 8. Click "Find Schemes". Show the Government Schemes tab, expanding one of the scheme cards.]**
+
+**Speaker:**
+> "Step 8 tackles financial support using **Dataset 5**. The platform filters through central and state welfare schemes. Because we saved the farmer's profile in Step 1, the system automatically calculates a 'Match Score' for each scheme, explaining exactly *why* the farmer is eligible based on their land size and category—saving them hours of bureaucratic research."
+
+---
+
+### ⏱️ 4:45 - 5:30 | Step 9: Central AI Assistant & Farm Action Plan
+**[Visual: Open Demo Tour -> Step 9. Click "Chat & Action Plan". Show the Chatbot, then click the "Generate Farm Action Plan" button to open the modal.]**
+
+**Speaker:**
+> "Finally, Step 9 ties it all together. We have a conversational AI assistant that understands the farmer's entire context. And with one click, the system compiles everything we just saw into a single, downloadable **8-Point Farm Action Plan**. It consolidates the soil analysis, yield targets, weather alerts, and market intelligence into one clear printout."
+
+---
+
+### ⏱️ 5:30 - 6:00 | Conclusion
+**[Visual: Keep the Farm Action Plan modal open on screen.]**
+
+**Speaker:**
+> "By unifying five separate datasets into one intuitive, mobile-friendly platform, SmartAgri AI empowers Indian farmers to make data-driven decisions from pre-sowing to post-harvest. Thank you for your time, and we look forward to your feedback!"

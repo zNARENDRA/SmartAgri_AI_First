@@ -43,6 +43,10 @@ export function FarmerProvider({ children }) {
   // Cross-module Context Bridge for AI Assistant
   const [pendingAiContext, setPendingAiContext] = useState(null);
   
+  // Global Disease Detection state bridge (from Scanner to Disease Tab)
+  const [globalDiseaseResult, setGlobalDiseaseResult] = useState(null);
+  const [globalDiseaseImage, setGlobalDiseaseImage] = useState(null);
+  
   // Field Photos (Visual Context History)
   const [fieldPhotos, setFieldPhotos] = useState([]);
 
@@ -159,7 +163,11 @@ export function FarmerProvider({ children }) {
         setPendingAiContext,
         askAiAboutDisease,
         fieldPhotos,
-        addFieldPhoto
+        addFieldPhoto,
+        globalDiseaseResult,
+        setGlobalDiseaseResult,
+        globalDiseaseImage,
+        setGlobalDiseaseImage
       }}
     >
       {children}
